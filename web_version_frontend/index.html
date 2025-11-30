@@ -8,20 +8,21 @@
     <!-- Fun round cartoon font -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
 
+    <!-- QR generator -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 </head>
 <body>
 
 <div id="mainContainer">
 
-    <!-- ▼ TITLE ▼ -->
+    <!-- TITLE -->
     <div id="header">
         <img src="https://cdn-icons-png.flaticon.com/512/4221/4221419.png" class="title-icon">
         <h1>Society Game</h1>
         <h2 class="subtitle">✨ Web Alpha Version ✨</h2>
     </div>
 
-    <!-- ▼ JOIN SCREEN ▼ -->
+    <!-- JOIN SCREEN -->
     <div id="screen_join" class="screen">
         <h2 class="sectionTitle">Join a Room</h2>
 
@@ -32,17 +33,19 @@
 
         <div class="buttonRow">
             <button class="btn joinBtn" onclick="joinRoom()">Join</button>
-            <button class="btn hostBtn" onclick="hostRoom()">Host Room</button>
+
+            <!-- FIXED: now routes to host-name screen -->
+            <button class="btn hostBtn" onclick="show('screen_host_setup')">Host Room</button>
         </div>
     </div>
 
-    <!-- ▼ ROLE SELECTION ▼ -->
+    <!-- ROLE SELECTION -->
     <div id="screen_role" class="screen hidden">
         <h2 class="sectionTitle">Choose Your Role</h2>
         <div id="roleList" class="roleGrid"></div>
     </div>
 
-    <!-- ▼ CAMPAIGN MODE ▼ -->
+    <!-- CAMPAIGNING -->
     <div id="screen_campaigning" class="screen hidden">
         <h2 class="sectionTitle">Campaigning</h2>
 
@@ -54,23 +57,23 @@
         </div>
     </div>
 
-    <!-- ▼ VOTING ▼ -->
+    <!-- VOTING -->
     <div id="screen_voting" class="screen hidden">
         <h2 class="sectionTitle">Voting Stage</h2>
         <div id="voteOptions" class="voteGrid"></div>
     </div>
-    
-    <!-- HOST NAME INPUT SCREEN -->
-    <div id="screen_hostName" class="screen hidden">
-        <h2 class="sectionTitle">Choose Your Name</h2>
 
-        <input id="hostNameInput" placeholder="Your Name">
+    <!-- HOST NAME SCREEN (NEW + FIXED) -->
+    <div id="screen_host_setup" class="screen hidden">
+        <h2 class="sectionTitle">Host Setup</h2>
 
-        <button class="btn hostBtn" onclick="finishHostSetup()">Continue</button>
+        <input id="hostNameInput" placeholder="Enter your name...">
+
+        <button class="btn hostBtn" onclick="finishHostSetup()">Create Room</button>
+        <button class="btn backBtn" onclick="show('screen_join')">Back</button>
     </div>
 
-
-    <!-- ▼ QR SCREEN ▼ -->
+    <!-- QR + LOBBY SCREEN -->
     <div id="screen_qr" class="screen hidden">
         <h2 class="sectionTitle">Scan to Join</h2>
 
@@ -79,14 +82,10 @@
         <p id="qrRoomCode" class="qrText"></p>
 
         <h3 class="sectionTitle" style="margin-top:30px;">Players</h3>
-
-        <div id="playerLobby" class="lobbyGrid">
-            <!-- Slots will be auto-filled in JS -->
-        </div>
+        <div id="playerLobby" class="lobbyGrid"></div>
 
         <button class="btn backBtn" onclick="show('screen_join')">Back</button>
     </div>
-
 
 </div>
 
