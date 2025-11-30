@@ -1,26 +1,36 @@
 //
-//  main.js
-//  Society Game
-//
-//  Created by Jeffrey Zheng on 11/29/25.
+//  main.js  — GLOBAL ONLINE VERSION (FULLY FIXED)
 //
 
 let socket = null;
 let playerID = null;
 let roomCode = null;
 
-// helper
+// 🌍 Your deployed backend URL
+const BACKEND_HTTP = "https://society-game.onrender.com";
+const BACKEND_WS  = "wss://society-game.onrender.com";
+
+// --------------------------------------------------
+// UI helper
+// --------------------------------------------------
 function show(id) {
     document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
     document.getElementById(id).classList.remove("hidden");
 }
 
+// --------------------------------------------------
+// JOIN ROOM
+// --------------------------------------------------
 function joinRoom() {
-    roomCode = document.getElementById("roomCodeInput").value;
-    const name = document.getElementById("playerNameInput").value;
+    roomCode = document.getElementById("roomCodeInput").value.trim();
+    const name = document.getElementById("playerNameInput").value.trim();
 
-    // join via REST
-    fetch("http://localhost:8080/join", {
+    if (!roomCode || !name) {
+        alert("Enter room code and name!");
+        return;
+    }
+
+    fetch(`${BACKEND_HTTP}/join`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ code: roomCode, name })
@@ -29,98 +39,140 @@ function joinRoom() {
     .then(data => {
         playerID = data.playerID;
         openSocket();
-    });
+    })
+    .catch(err => console.error("JOIN ERR:", err));
 }
 
+// --------------------------------------------------
+// OPEN WEBSOCKET (Render-safe)
+// --------------------------------------------------
 function openSocket() {
-    socket = new WebSocket(`ws://localhost:8080/ws/${roomCode}/${playerID}`);
+    socket = new WebSocket(`${BACKEND_WS}/ws/${roomCode}/${playerID}`);
 
     socket.onopen = () => {
-        console.log("WS connected");
+        console.log("WS connected!");
         show("screen_role");
     };
 
     socket.onmessage = (msg) => {
         const data = JSON.parse(msg.data);
+        console.log("WS MSG:", data);
 
-        if (data.type === "roles_available") {
-            renderRoles(data.roles);
-        }
-        if (data.type === "chat") {
-            addChatMessage(data.from, data.text);
-        }
-        if (data.type === "start_campaign") {
-            show("screen_campaigning");
-        }
-        if (data.type === "start_voting") {
-            show("screen_voting");
-            renderVoting(data.options);
+        switch (data.type) {
+            case "roles_available":
+                renderRoles(data.roles);
+                break;
+
+            case "chat":
+                addChatMessage(data.from, data.text);
+                break;
+
+            case "start_campaign":
+                show("screen_campaigning");
+                break;
+
+            case "start_voting":
+                show("screen_voting");
+                renderVoting(data.options);
+                break;
         }
     };
+
+    socket.onerror = (e) => console.error("WS error:", e);
+    socket.onclose = () => console.warn("WS closed");
 }
 
+// --------------------------------------------------
+// RENDER ROLES
+// --------------------------------------------------
 function renderRoles(roles) {
     const container = document.getElementById("roleList");
     container.innerHTML = "";
 
-    roles.forEach(r => {
+    roles.forEach(role => {
         const btn = document.createElement("button");
-        btn.innerText = r;
+        btn.innerText = role;
+        btn.className = "roleButton";
+
         btn.onclick = () => {
-            socket.send(JSON.stringify({ type: "select_role", role: r }));
+            socket.send(JSON.stringify({
+                type: "select_role",
+                role
+            }));
         };
+
         container.appendChild(btn);
     });
 }
 
+// --------------------------------------------------
+// CHAT
+// --------------------------------------------------
 function sendChat() {
-    const text = document.getElementById("chatInput").value;
+    const input = document.getElementById("chatInput");
+    const text = input.value.trim();
+    if (!text) return;
+
     socket.send(JSON.stringify({ type: "chat", text }));
-    document.getElementById("chatInput").value = "";
+    input.value = "";
 }
 
 function addChatMessage(from, text) {
     const box = document.getElementById("chatBox");
     const el = document.createElement("div");
-    el.innerText = `${from}: ${text}`;
+
+    el.innerHTML = `<strong>${from}:</strong> ${text}`;
     box.appendChild(el);
     box.scrollTop = box.scrollHeight;
 }
 
+// --------------------------------------------------
+// VOTING
+// --------------------------------------------------
 function renderVoting(options) {
     const container = document.getElementById("voteOptions");
     container.innerHTML = "";
 
     options.forEach(role => {
         const btn = document.createElement("button");
-        btn.innerText = `Vote: ${role}`;
-        btn.onclick = () =>
-            socket.send(JSON.stringify({ type: "vote", role }));
+        btn.className = "voteButton";
+        btn.innerText = `Vote for: ${role}`;
+
+        btn.onclick = () => {
+            socket.send(JSON.stringify({
+                type: "vote",
+                role
+            }));
+        };
+
         container.appendChild(btn);
     });
 }
 
+// --------------------------------------------------
+// HOST ROOM
+// --------------------------------------------------
 function hostRoom() {
-    fetch("http://YOUR-IP-ADDRESS:8080/create", {
-        method: "POST"
-    })
+    fetch(`${BACKEND_HTTP}/create`, { method: "POST" })
     .then(r => r.json())
     .then(data => {
-        console.log("Room created:", data);
+        console.log("Created room:", data);
         showQRCode(data.joinURL, data.code);
     })
-    .catch(err => console.error("HostRoom error:", err));
+    .catch(err => console.error("HOST ERR:", err));
 }
 
+// --------------------------------------------------
+// QR CODE PAGE
+// --------------------------------------------------
 function showQRCode(joinURL, code) {
     show("screen_qr");
 
     new QRious({
         element: document.getElementById("qrCanvas"),
-        value: joinURL,
-        size: 250
+        value: joinURL,       // 🔥 global join link
+        size: 260
     });
 
     document.getElementById("qrRoomCode").innerText = `Room Code: ${code}`;
 }
-

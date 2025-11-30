@@ -11,6 +11,7 @@
 <div id="app">
     <h1>🏛️ Society Game (Web Alpha)</h1>
 
+    <!-- JOIN SCREEN -->
     <div id="screen_join" class="screen">
         <h2>Join Room</h2>
         <input id="roomCodeInput" placeholder="Enter room code..." />
@@ -19,13 +20,16 @@
         <button onclick="hostRoom()">Host a Room</button>
     </div>
 
+    <!-- ROLE SELECTION -->
     <div id="screen_role" class="screen hidden">
         <h2>Select Your Role</h2>
         <div id="roleList"></div>
     </div>
 
+    <!-- CAMPAIGNING -->
     <div id="screen_campaigning" class="screen hidden">
         <h2>Campaigning Stage</h2>
+
         <textarea id="chatInput" placeholder="Type message..."></textarea>
         <button onclick="sendChat()">Send</button>
 
@@ -33,22 +37,22 @@
         <div id="chatBox"></div>
     </div>
 
+    <!-- VOTING -->
     <div id="screen_voting" class="screen hidden">
         <h2>Voting Stage</h2>
         <div id="voteOptions"></div>
     </div>
 
-</div>
+    <!-- QR CODE SCREEN -->
+    <div id="screen_qr" class="screen hidden">
+        <h2>Scan to Join</h2>
+        <canvas id="qrCanvas"></canvas>
+        <p id="qrRoomCode" style="font-size:20px; margin-top:10px;"></p>
+        <button onclick="show('screen_join')">Back</button>
+    </div>
 
-<div id="screen_qr" class="screen hidden">
-    <h2>Scan to Join</h2>
-    <canvas id="qrCanvas"></canvas>
-    <p id="qrRoomCode" style="font-size:20px; margin-top:10px;"></p>
-    <button onclick="show('screen_join')">Back</button>
 </div>
-
 
 <script src="main.js"></script>
 </body>
 </html>
-
