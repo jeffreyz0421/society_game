@@ -1,24 +1,25 @@
 //
-//  main.js  — GLOBAL ONLINE VERSION (FULLY FIXED)
+//  main.js — FINAL POLISHED VERSION
 //
 
 let socket = null;
 let playerID = null;
 let roomCode = null;
-const EMOJIS = ["😎","🤠","🙂","🥸","🤓","🙂‍↕️","😇"];
+let isHost = false;
+
+const EMOJIS = ["😎","🤠","🙂","🥸","🤓","😇","😁","🤩"];
 function randomEmoji() {
-    return EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
+    return EMOJIS[Math.floor(Math.random() * EMOJIS.length)];
 }
+
 let players = [null, null, null, null, null];
 
-
-
-// 🌍 Your deployed backend URL
+// 🌍 BACKEND URL
 const BACKEND_HTTP = "https://society-game-backend.onrender.com";
-const BACKEND_WS  = "wss://society-game-backend.onrender.com";
+const BACKEND_WS   = "wss://society-game-backend.onrender.com";
 
 // --------------------------------------------------
-// UI helper
+// UI HELPERS
 // --------------------------------------------------
 function show(id) {
     document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
@@ -45,20 +46,25 @@ function joinRoom() {
     .then(r => r.json())
     .then(data => {
         playerID = data.playerID;
+
+        // Player enters lobby screen
+        show("screen_waiting");
+        document.getElementById("waitingRoomCode").innerText = roomCode;
+
         openSocket();
     })
     .catch(err => console.error("JOIN ERR:", err));
 }
 
 // --------------------------------------------------
-// OPEN WEBSOCKET (Render-safe)
+// OPEN WEBSOCKET
 // --------------------------------------------------
 function openSocket() {
     socket = new WebSocket(`${BACKEND_WS}/ws/${roomCode}/${playerID}`);
 
     socket.onopen = () => {
         console.log("WS connected!");
-        show("screen_role");
+        // 🧘 Players stay on waiting lobby, host stays on QR screen
     };
 
     socket.onmessage = (msg) => {
@@ -66,12 +72,18 @@ function openSocket() {
         console.log("WS MSG:", data);
 
         switch (data.type) {
-            case "roles_available":
-                renderRoles(data.roles);
-                break;
-                
+
             case "player_joined":
                 addNewPlayer(data.name);
+                break;
+
+            case "start_game":
+                // Everyone moves to role selection
+                show("screen_role");
+                break;
+
+            case "roles_available":
+                renderRoles(data.roles);
                 break;
 
             case "chat":
@@ -88,9 +100,6 @@ function openSocket() {
                 break;
         }
     };
-
-    socket.onerror = (e) => console.error("WS error:", e);
-    socket.onclose = () => console.warn("WS closed");
 }
 
 // --------------------------------------------------
@@ -114,7 +123,6 @@ function renderRoles(roles) {
     });
 }
 
-
 // --------------------------------------------------
 // CHAT
 // --------------------------------------------------
@@ -137,55 +145,29 @@ function addChatMessage(from, text) {
 }
 
 // --------------------------------------------------
-// VOTING
-// --------------------------------------------------
-function renderVoting(options) {
-    const container = document.getElementById("voteOptions");
-    container.innerHTML = "";
-
-    options.forEach(role => {
-        const btn = document.createElement("button");
-        btn.className = "voteButton";
-        btn.innerText = `Vote for: ${role}`;
-
-        btn.onclick = () =>
-            socket.send(JSON.stringify({ type: "vote", role }));
-
-        container.appendChild(btn);
-    });
-}
-
-
-// --------------------------------------------------
-// HOST ROOM
+// HOST FLOW
 // --------------------------------------------------
 let hostName = null;
 let hostEmoji = null;
 
 function finishHostSetup() {
     hostName = document.getElementById("hostNameInput").value.trim();
-    if (!hostName) {
-        alert("Enter your name!");
-        return;
-    }
+    if (!hostName) return alert("Enter your name!");
 
-    // Generate host emoji
     hostEmoji = randomEmoji();
 
-    // Create room
     fetch(`${BACKEND_HTTP}/create`, { method: "POST" })
         .then(r => r.json())
         .then(data => {
             roomCode = data.code;
+            isHost = true;
+
             showQRCode(data.joinURL, data.code);
-
-            // Fill lobby with empty slots first
             setupLobbyUI();
-
-            // Host joins room as Player 1
             joinAsHost();
         });
 }
+
 function joinAsHost() {
     fetch(`${BACKEND_HTTP}/join`, {
         method: "POST",
@@ -197,51 +179,47 @@ function joinAsHost() {
         playerID = data.playerID;
         openSocket();
 
-        // Immediately mark host as slot #1
-        players[0] = {
-            name: hostName,
-            emoji: hostEmoji
-        };
+        players[0] = { name: hostName, emoji: hostEmoji };
         updateLobbyUI();
     });
 }
 
-
 // --------------------------------------------------
-// QR CODE PAGE
+// QR SCREEN
 // --------------------------------------------------
 function showQRCode(joinURL, code) {
     show("screen_qr");
 
     new QRious({
         element: document.getElementById("qrCanvas"),
-        value: joinURL,       // 🔥 global join link
+        value: joinURL,
         size: 260
     });
 
     document.getElementById("qrRoomCode").innerText = `Room Code: ${code}`;
+    document.getElementById("startGameBtn").classList.remove("hidden");
 }
 
+// --------------------------------------------------
+// LOBBY PLAYER SYSTEM
+// --------------------------------------------------
 function setupLobbyUI() {
     const lobby = document.getElementById("playerLobby");
     lobby.innerHTML = "";
 
     for (let i = 0; i < 5; i++) {
-        const slot = document.createElement("div");
-        slot.className = "playerSlot";
-        slot.id = `slot_${i}`;
-
-        slot.innerHTML = `
-            <div class="waitingText">Waiting...</div>
+        lobby.innerHTML += `
+            <div class="playerSlot" id="slot_${i}">
+                <div class="waitingText">Waiting...</div>
+            </div>
         `;
-
-        lobby.appendChild(slot);
     }
 }
 
 function updateLobbyUI() {
     players.forEach((p, i) => {
         const slot = document.getElementById(`slot_${i}`);
+        if (!slot) return;
 
         if (!p) {
             slot.innerHTML = `<div class="waitingText">Waiting...</div>`;
@@ -255,14 +233,19 @@ function updateLobbyUI() {
 }
 
 function addNewPlayer(name) {
-    // Find empty slot
     const idx = players.findIndex(p => p === null);
     if (idx === -1) return;
 
-    players[idx] = {
-        name,
-        emoji: randomEmoji()
-    };
-
+    players[idx] = { name, emoji: randomEmoji() };
     updateLobbyUI();
+}
+
+// --------------------------------------------------
+// START GAME (host only)
+// --------------------------------------------------
+function startGame() {
+    socket.send(JSON.stringify({
+        type: "start_game",
+        code: roomCode
+    }));
 }

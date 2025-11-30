@@ -143,7 +143,20 @@ func (m *Manager) HandleWS(w http.ResponseWriter, r *http.Request, conn *websock
         }
 
         log.Printf("WS message from %s: %s", id, string(msg))
+
+        // Parse message
+        var data map[string]interface{}
+        json.Unmarshal(msg, &data)
+
+        // START GAME
+        if data["type"] == "start_game" {
+            m.Broadcast(code, []byte(`{"type":"start_game"}`))
+            continue
+        }
+
+        // Default broadcast
         m.Broadcast(code, msg)
+
     }
 }
 

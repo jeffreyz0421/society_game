@@ -19,7 +19,7 @@
     <div id="header">
         <img src="https://cdn-icons-png.flaticon.com/512/4221/4221419.png" class="title-icon">
         <h1>Society Game</h1>
-        <h2 class="subtitle">✨ Web Alpha Version ✨</h2>
+        <h2 class="subtitle">Web Alpha Version</h2>
     </div>
 
     <!-- JOIN SCREEN -->
@@ -33,10 +33,41 @@
 
         <div class="buttonRow">
             <button class="btn joinBtn" onclick="joinRoom()">Join</button>
-
-            <!-- FIXED: now routes to host-name screen -->
             <button class="btn hostBtn" onclick="show('screen_host_setup')">Host Room</button>
         </div>
+    </div>
+
+    <!-- WAITING FOR HOST SCREEN (PLAYERS ONLY) -->
+    <div id="screen_waiting" class="screen hidden">
+        <h2 class="sectionTitle">⏳ Waiting for Host...</h2>
+        <p class="waitingNote">Room Code: <span id="waitingRoomCode"></span></p>
+        <p class="waitingSub">The game will start once the host clicks "Start Game"</p>
+    </div>
+
+    <!-- HOST NAME SCREEN -->
+    <div id="screen_host_setup" class="screen hidden">
+        <h2 class="sectionTitle">Host Setup</h2>
+
+        <input id="hostNameInput" placeholder="Enter your name...">
+
+        <button class="btn hostBtn" onclick="finishHostSetup()">Create Room</button>
+        <button class="btn backBtn" onclick="show('screen_join')">Back</button>
+    </div>
+
+    <!-- QR + LOBBY SCREEN (HOST ONLY) -->
+    <div id="screen_qr" class="screen hidden">
+        <h2 class="sectionTitle">Scan to Join</h2>
+
+        <canvas id="qrCanvas" class="qrCanvas"></canvas>
+
+        <p id="qrRoomCode" class="qrText"></p>
+
+        <h3 class="sectionTitle" style="margin-top:25px;">Players</h3>
+        <div id="playerLobby" class="lobbyGrid"></div>
+
+        <button id="startGameBtn" class="btn startBtn hidden" onclick="startGame()">Start Game</button>
+
+        <button class="btn backBtn" onclick="show('screen_join')">Back</button>
     </div>
 
     <!-- ROLE SELECTION -->
@@ -61,30 +92,6 @@
     <div id="screen_voting" class="screen hidden">
         <h2 class="sectionTitle">Voting Stage</h2>
         <div id="voteOptions" class="voteGrid"></div>
-    </div>
-
-    <!-- HOST NAME SCREEN (NEW + FIXED) -->
-    <div id="screen_host_setup" class="screen hidden">
-        <h2 class="sectionTitle">Host Setup</h2>
-
-        <input id="hostNameInput" placeholder="Enter your name...">
-
-        <button class="btn hostBtn" onclick="finishHostSetup()">Create Room</button>
-        <button class="btn backBtn" onclick="show('screen_join')">Back</button>
-    </div>
-
-    <!-- QR + LOBBY SCREEN -->
-    <div id="screen_qr" class="screen hidden">
-        <h2 class="sectionTitle">Scan to Join</h2>
-
-        <canvas id="qrCanvas" class="qrCanvas"></canvas>
-
-        <p id="qrRoomCode" class="qrText"></p>
-
-        <h3 class="sectionTitle" style="margin-top:30px;">Players</h3>
-        <div id="playerLobby" class="lobbyGrid"></div>
-
-        <button class="btn backBtn" onclick="show('screen_join')">Back</button>
     </div>
 
 </div>
