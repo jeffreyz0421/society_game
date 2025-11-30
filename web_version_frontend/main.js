@@ -14,8 +14,8 @@ let players = [null, null, null, null, null];
 
 
 // 🌍 Your deployed backend URL
-const BACKEND_HTTP = "https://society-game.onrender.com";
-const BACKEND_WS  = "wss://society-game.onrender.com";
+const BACKEND_HTTP = "https://society-game-backend.onrender.com";
+const BACKEND_WS  = "wss://society-game-backend.onrender.com";
 
 // --------------------------------------------------
 // UI helper
