@@ -9,8 +9,9 @@ import (
     "society_backend/internal/room"
 )
 
+// GLOBAL WebSocket upgrader
 var upgrader = websocket.Upgrader{
-    CheckOrigin: func(r *http.Request) bool { return true }, // 🔥 allow WS from anywhere
+    CheckOrigin: func(r *http.Request) bool { return true }, // allow all origins
 }
 
 func main() {
@@ -18,33 +19,54 @@ func main() {
 
     r := mux.NewRouter()
 
-    // 🔥 GLOBAL CORS FIX
+    // ----------------------------------------------------
+    // 🌍 GLOBAL CORS MIDDLEWARE (needed for Render + Web)
+    // ----------------------------------------------------
     r.Use(func(next http.Handler) http.Handler {
         return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+            // Allow any site to call this backend
             w.Header().Set("Access-Control-Allow-Origin", "*")
+
+            // Allow any headers the browser sends
             w.Header().Set("Access-Control-Allow-Headers", "*")
+
+            // Allow REST & OPTIONS
             w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+
+            // Browser OPTIONS preflight
             if r.Method == "OPTIONS" {
+                w.WriteHeader(http.StatusOK)
                 return
             }
+
             next.ServeHTTP(w, r)
         })
     })
 
-    // REST endpoints
+    // ----------------------------------------------------
+    // REST ENDPOINTS
+    // ----------------------------------------------------
     r.HandleFunc("/create", manager.HandleCreateRoom).Methods("POST", "OPTIONS")
     r.HandleFunc("/join", manager.HandleJoinRoom).Methods("POST", "OPTIONS")
 
-    // Websocket
+    // ----------------------------------------------------
+    // WEBSOCKET ENDPOINT
+    // ----------------------------------------------------
     r.HandleFunc("/ws/{code}/{playerID}", func(w http.ResponseWriter, r *http.Request) {
         conn, err := upgrader.Upgrade(w, r, nil)
         if err != nil {
-            log.Println("WS error:", err)
+            log.Println("WebSocket Upgrade ERROR:", err)
             return
         }
         manager.HandleWS(w, r, conn)
     })
 
-    log.Println("🚀 Server running at :8080")
-    http.ListenAndServe(":8080", r)
+    // ----------------------------------------------------
+    // START SERVER
+    // ----------------------------------------------------
+    log.Println("🚀 Global Society Backend running on port :8080")
+    if err := http.ListenAndServe(":8080", r); err != nil {
+        log.Fatal("Server crashed:", err)
+    }
 }
