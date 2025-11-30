@@ -1,0 +1,23 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+    background: #faf7e8;
+    padding: 20px;
+}
+
+.screen {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+
+#chatBox {
+    height: 200px;
+    overflow-y: scroll;
+    background: #fff;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+

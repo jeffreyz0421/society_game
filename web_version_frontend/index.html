@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Society Game Web Alpha</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+</head>
+<body>
+
+<div id="app">
+    <h1>🏛️ Society Game (Web Alpha)</h1>
+
+    <div id="screen_join" class="screen">
+        <h2>Join Room</h2>
+        <input id="roomCodeInput" placeholder="Enter room code..." />
+        <input id="playerNameInput" placeholder="Your name..." />
+        <button onclick="joinRoom()">Join</button>
+        <button onclick="hostRoom()">Host a Room</button>
+    </div>
+
+    <div id="screen_role" class="screen hidden">
+        <h2>Select Your Role</h2>
+        <div id="roleList"></div>
+    </div>
+
+    <div id="screen_campaigning" class="screen hidden">
+        <h2>Campaigning Stage</h2>
+        <textarea id="chatInput" placeholder="Type message..."></textarea>
+        <button onclick="sendChat()">Send</button>
+
+        <h3>Messages</h3>
+        <div id="chatBox"></div>
+    </div>
+
+    <div id="screen_voting" class="screen hidden">
+        <h2>Voting Stage</h2>
+        <div id="voteOptions"></div>
+    </div>
+
+</div>
+
+<div id="screen_qr" class="screen hidden">
+    <h2>Scan to Join</h2>
+    <canvas id="qrCanvas"></canvas>
+    <p id="qrRoomCode" style="font-size:20px; margin-top:10px;"></p>
+    <button onclick="show('screen_join')">Back</button>
+</div>
+
+
+<script src="main.js"></script>
+</body>
+</html>
+

@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+
 // MARK: - Voting View
 struct VotingView: View {
     @ObservedObject var game: GameState
@@ -52,12 +53,15 @@ struct VotingView: View {
             case .revote(let pos):
                 RevoteBallotView(game: game, position: pos)
             case .finished:
-                Button("Start Running Stage") {
-                    game.stage = .running
+                Button("Reveal Roles →") {
+                    game.votingPhase = .revealAssignments
                 }
                 .buttonStyle(.borderedProminent)
             case .revealAssignments:
-                AssignmentRevealView(game: game)
+                AssignmentRevealView(game: game, onContinue: {
+                    game.stage = .running
+                    game.votingPhase = .finished
+                })
             }
         }
         .padding()
@@ -235,10 +239,10 @@ struct VotingBallotView: View {
 // MARK: - Cute Role Card
 struct VotingRoleCard: View {
     let role: Role
-    let candidates: [Player]
-    @Binding var selected: Int
-    
-    let roleEmojis: [Role: String] = [
+    let candidates: [Player]       // ✅ plain array
+    @Binding var selected: Int     // ✅ selection binding
+
+    private let roleEmojis: [Role: String] = [
         .president: "🎩",
         .sccj: "⚖️",
         .treasury: "💰",
@@ -250,71 +254,83 @@ struct VotingRoleCard: View {
         .agriculture: "🌾",
         .resource: "📦"
     ]
-    
+
     var body: some View {
-        VStack(spacing: 4) {
-            // Card title
+        VStack(spacing: 6) {
+            // MARK: - Header
             Text("\(roleEmojis[role] ?? "❓") \(role.rawValue)")
                 .font(.system(size: 14, weight: .bold, design: .rounded))
                 .foregroundColor(.black)
                 .padding(.top, 2)
-            
+
             Divider()
-            
-            // Candidate preview avatars
-            HStack(spacing: 6) {
-                ForEach(candidates) { player in
-                    VStack(spacing: 1) {
-                        Text(playerAvatars[player.index % playerAvatars.count])
-                            .font(.system(size: 20))
-                        Text(player.name)
-                            .font(.system(size: 9, weight: .medium, design: .rounded))
-                            .foregroundColor(.gray)
+
+            // MARK: - Candidate Preview
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    ForEach(candidates, id: \.id) { player in
+                        VStack(spacing: 2) {
+                            Text(playerAvatars[player.index % playerAvatars.count])
+                                .font(.system(size: 20))
+                            Text(player.name)
+                                .font(.system(size: 9, weight: .medium, design: .rounded))
+                                .foregroundColor(.gray)
+                        }
+                        .frame(width: 50)
                     }
                 }
+                .padding(.vertical, 3)
             }
-            .padding(.vertical, 3)
-            
-            // Dropdown
+
+            // MARK: - Candidate Dropdown
             Menu {
                 Button("Skip") { selected = -1 }
-                ForEach(candidates) { player in
+                ForEach(candidates, id: \.id) { player in
                     Button {
                         selected = player.index
                     } label: {
-                        // ✅ Single Text string with both emoji + name
                         Text("\(playerAvatars[player.index % playerAvatars.count]) \(player.name)")
                     }
                 }
             } label: {
-                HStack {
-                    if selected == -1 {
-                        Text("Choose a candidate")
-                            .font(.system(size: 12, weight: .semibold, design: .rounded))
-                    } else if let candidate = candidates.first(where: { $0.index == selected }) {
-                        // ✅ Collapsed menu also shows emoji + name
-                        Text("\(playerAvatars[candidate.index % playerAvatars.count]) \(candidate.name)")
-                            .font(.system(size: 12, weight: .semibold, design: .rounded))
-                    }
-                    Spacer()
-                    Image(systemName: "chevron.down")
-                }
-                .padding(.vertical, 4)
-                .padding(.horizontal, 6)
-                .background(Color.blue.opacity(0.15))
-                .clipShape(RoundedRectangle(cornerRadius: 6))
+                dropdownLabel
             }
             .padding(.bottom, 4)
-
         }
-        .padding(4)
+        .padding(6)
         .frame(maxWidth: .infinity)
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 10))
-        .shadow(color: .gray.opacity(0.1), radius: 1, x: 0, y: 1)
+        .shadow(color: .gray.opacity(0.15), radius: 1, x: 0, y: 1)
+    }
+
+    // MARK: - Dropdown Label
+    private var dropdownLabel: some View {
+        HStack {
+            if selected == -1 {
+                Text("Choose a candidate")
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
+            } else {
+                // ✅ Safer lookup with explicit Player type
+                if let foundCandidate: Player = candidates.first(where: { (p: Player) -> Bool in
+                    p.index == selected
+                }) {
+                    Text("\(playerAvatars[foundCandidate.index % playerAvatars.count]) \(foundCandidate.name)")
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                } else {
+                    Text("Choose a candidate")
+                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                }
+            }
+            Spacer()
+            Image(systemName: "chevron.down")
+        }
+        .padding(.vertical, 4)
+        .padding(.horizontal, 6)
+        .background(Color.blue.opacity(0.15))
+        .clipShape(RoundedRectangle(cornerRadius: 6))
     }
 }
-
 
 
 // MARK: - Revote
@@ -353,11 +369,10 @@ struct RevoteBallotView: View {
     }
 }
 
-// MARK: - Assignment Reveal
 struct AssignmentRevealView: View {
     @ObservedObject var game: GameState
+    var onContinue: () -> Void   // NEW callback
     
-    // reuse role emojis
     let roleEmojis: [Role: String] = [
         .president: "🎩",
         .sccj: "⚖️",
@@ -376,35 +391,27 @@ struct AssignmentRevealView: View {
             LinearGradient(
                 gradient: Gradient(colors: [Color(red: 0.96, green: 0.91, blue: 0.76),
                                             Color(red: 0.90, green: 0.82, blue: 0.63)]),
-                startPoint: .top,
-                endPoint: .bottom
+                startPoint: .top, endPoint: .bottom
             )
             .ignoresSafeArea()
 
             VStack(spacing: 20) {
-                // Cute header with emoji
                 Text("✨ Congratulations on your roles in society ✨")
                     .font(.system(size: 22, weight: .bold, design: .rounded))
                     .multilineTextAlignment(.center)
                     .padding()
                     .background(Color.white.opacity(0.8))
                     .clipShape(RoundedRectangle(cornerRadius: 14))
-                
+
                 ScrollView {
                     VStack(alignment: .leading, spacing: 12) {
                         ForEach(game.players) { p in
                             HStack {
                                 Text(p.name)
                                     .font(.system(size: 16, weight: .semibold, design: .rounded))
-                                    .foregroundColor(.black)
                                 Spacer()
                                 if let role = p.role {
                                     Text("\(roleEmojis[role] ?? "❓") \(role.rawValue)")
-                                        .font(.system(size: 16, weight: .medium, design: .rounded))
-                                        .foregroundColor(.gray)
-                                } else {
-                                    Text("No Role")
-                                        .italic()
                                         .font(.system(size: 16, weight: .medium, design: .rounded))
                                         .foregroundColor(.gray)
                                 }
@@ -415,16 +422,17 @@ struct AssignmentRevealView: View {
                 }
                 .frame(maxHeight: 300)
 
-                Button("Continue →") {
-                    game.votingPhase = .finished
+                Button(action: onContinue) {
+                    Label("Continue →", systemImage: "arrow.right.circle.fill")
+                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue.opacity(0.85))
+                        .foregroundColor(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .shadow(radius: 3)
                 }
-                .font(.system(size: 18, weight: .bold, design: .rounded))
-                .padding(.vertical, 10)
-                .padding(.horizontal, 20)
-                .background(Color.blue.opacity(0.8))
-                .foregroundColor(.white)
-                .clipShape(RoundedRectangle(cornerRadius: 14))
-                .padding(.top, 12)
+                .padding(.horizontal, 40)
             }
             .padding()
         }

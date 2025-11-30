@@ -6,6 +6,45 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		7833E8C42EDACA56004D188F /* GAMERUNNING.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E89A2EDACA56004D188F /* GAMERUNNING.swift */; };
+		7833E8C52EDACA56004D188F /* Untitled.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8C12EDACA56004D188F /* Untitled.swift */; };
+		7833E8C62EDACA56004D188F /* SJCC_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8AF2EDACA56004D188F /* SJCC_View.swift */; };
+		7833E8C72EDACA56004D188F /* Communications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8942EDACA56004D188F /* Communications.swift */; };
+		7833E8C82EDACA56004D188F /* Society_Variables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8BD2EDACA56004D188F /* Society_Variables.swift */; };
+		7833E8C92EDACA56004D188F /* Society_Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8B72EDACA56004D188F /* Society_Main.swift */; };
+		7833E8CA2EDACA56004D188F /* Prez_Action_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8AB2EDACA56004D188F /* Prez_Action_View.swift */; };
+		7833E8CB2EDACA56004D188F /* In_Game_Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8A02EDACA56004D188F /* In_Game_Manager.swift */; };
+		7833E8CD2EDACA56004D188F /* ExecutiveOrders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8992EDACA56004D188F /* ExecutiveOrders.swift */; };
+		7833E8CE2EDACA56004D188F /* Education_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8982EDACA56004D188F /* Education_View.swift */; };
+		7833E8CF2EDACA56004D188F /* Society_Propose_Promise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8BA2EDACA56004D188F /* Society_Propose_Promise.swift */; };
+		7833E8D02EDACA56004D188F /* PubHealth_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8AD2EDACA56004D188F /* PubHealth_View.swift */; };
+		7833E8D12EDACA56004D188F /* Society_Voting_Phase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8BE2EDACA56004D188F /* Society_Voting_Phase.swift */; };
+		7833E8D22EDACA56004D188F /* Society_Promises_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8B92EDACA56004D188F /* Society_Promises_View.swift */; };
+		7833E8D32EDACA56004D188F /* ConstructionScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8972EDACA56004D188F /* ConstructionScreen.swift */; };
+		7833E8D42EDACA56004D188F /* Construction_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8952EDACA56004D188F /* Construction_View.swift */; };
+		7833E8D52EDACA56004D188F /* Agriculture_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E88C2EDACA56004D188F /* Agriculture_View.swift */; };
+		7833E8D62EDACA56004D188F /* Inbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8A12EDACA56004D188F /* Inbox.swift */; };
+		7833E8D82EDACA56004D188F /* ConstructionBuilding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8962EDACA56004D188F /* ConstructionBuilding.swift */; };
+		7833E8D92EDACA56004D188F /* Transportation_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8BF2EDACA56004D188F /* Transportation_View.swift */; };
+		7833E8DA2EDACA56004D188F /* Society_Panel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8B82EDACA56004D188F /* Society_Panel.swift */; };
+		7833E8DB2EDACA56004D188F /* CommScreenRunning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8932EDACA56004D188F /* CommScreenRunning.swift */; };
+		7833E8DC2EDACA56004D188F /* Society_Summary_Phase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8BC2EDACA56004D188F /* Society_Summary_Phase.swift */; };
+		7833E8DD2EDACA56004D188F /* Campaigning_Phase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E88F2EDACA56004D188F /* Campaigning_Phase.swift */; };
+		7833E8DE2EDACA56004D188F /* Pres_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8AA2EDACA56004D188F /* Pres_View.swift */; };
+		7833E8DF2EDACA56004D188F /* LOCALROOMsetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8A92EDACA56004D188F /* LOCALROOMsetup.swift */; };
+		7833E8E02EDACA56004D188F /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E89B2EDACA56004D188F /* GameState.swift */; };
+		7833E8E12EDACA56004D188F /* PROFILE.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8AC2EDACA56004D188F /* PROFILE.swift */; };
+		7833E8E22EDACA56004D188F /* Labor_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8A82EDACA56004D188F /* Labor_View.swift */; };
+		7833E8E32EDACA56004D188F /* Treasury_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8C02EDACA56004D188F /* Treasury_View.swift */; };
+		7833E8E42EDACA56004D188F /* HOMEview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E89E2EDACA56004D188F /* HOMEview.swift */; };
+		7833E8E52EDACA56004D188F /* CampaignCommOnly.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E88E2EDACA56004D188F /* CampaignCommOnly.swift */; };
+		7833E8E62EDACA56004D188F /* In_Game_Def.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E89F2EDACA56004D188F /* In_Game_Def.swift */; };
+		7833E8E72EDACA56004D188F /* Society_Rally_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8BB2EDACA56004D188F /* Society_Rally_View.swift */; };
+		7833E8E92EDACA56004D188F /* ResourceAllo_View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7833E8AE2EDACA56004D188F /* ResourceAllo_View.swift */; };
+		7833E8ED2EDACA56004D188F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7833E88D2EDACA56004D188F /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		78925E772E8913DE002C84F3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,25 +63,58 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7833E88C2EDACA56004D188F /* Agriculture_View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Agriculture_View.swift; sourceTree = "<group>"; };
+		7833E88D2EDACA56004D188F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		7833E88E2EDACA56004D188F /* CampaignCommOnly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignCommOnly.swift; sourceTree = "<group>"; };
+		7833E88F2EDACA56004D188F /* Campaigning_Phase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Campaigning_Phase.swift; sourceTree = "<group>"; };
+		7833E8932EDACA56004D188F /* CommScreenRunning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommScreenRunning.swift; sourceTree = "<group>"; };
+		7833E8942EDACA56004D188F /* Communications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Communications.swift; sourceTree = "<group>"; };
+		7833E8952EDACA56004D188F /* Construction_View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Construction_View.swift; sourceTree = "<group>"; };
+		7833E8962EDACA56004D188F /* ConstructionBuilding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstructionBuilding.swift; sourceTree = "<group>"; };
+		7833E8972EDACA56004D188F /* ConstructionScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstructionScreen.swift; sourceTree = "<group>"; };
+		7833E8982EDACA56004D188F /* Education_View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Education_View.swift; sourceTree = "<group>"; };
+		7833E8992EDACA56004D188F /* ExecutiveOrders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutiveOrders.swift; sourceTree = "<group>"; };
+		7833E89A2EDACA56004D188F /* GAMERUNNING.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GAMERUNNING.swift; sourceTree = "<group>"; };
+		7833E89B2EDACA56004D188F /* GameState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameState.swift; sourceTree = "<group>"; };
+		7833E89E2EDACA56004D188F /* HOMEview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HOMEview.swift; sourceTree = "<group>"; };
+		7833E89F2EDACA56004D188F /* In_Game_Def.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = In_Game_Def.swift; sourceTree = "<group>"; };
+		7833E8A02EDACA56004D188F /* In_Game_Manager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = In_Game_Manager.swift; sourceTree = "<group>"; };
+		7833E8A12EDACA56004D188F /* Inbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Inbox.swift; sourceTree = "<group>"; };
+		7833E8A82EDACA56004D188F /* Labor_View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Labor_View.swift; sourceTree = "<group>"; };
+		7833E8A92EDACA56004D188F /* LOCALROOMsetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LOCALROOMsetup.swift; sourceTree = "<group>"; };
+		7833E8AA2EDACA56004D188F /* Pres_View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pres_View.swift; sourceTree = "<group>"; };
+		7833E8AB2EDACA56004D188F /* Prez_Action_View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prez_Action_View.swift; sourceTree = "<group>"; };
+		7833E8AC2EDACA56004D188F /* PROFILE.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PROFILE.swift; sourceTree = "<group>"; };
+		7833E8AD2EDACA56004D188F /* PubHealth_View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PubHealth_View.swift; sourceTree = "<group>"; };
+		7833E8AE2EDACA56004D188F /* ResourceAllo_View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceAllo_View.swift; sourceTree = "<group>"; };
+		7833E8AF2EDACA56004D188F /* SJCC_View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SJCC_View.swift; sourceTree = "<group>"; };
+		7833E8B02EDACA56004D188F /* Society Game.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = "Society Game.xcodeproj"; sourceTree = "<group>"; };
+		7833E8B62EDACA56004D188F /* Society_Game.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Society_Game.entitlements; sourceTree = "<group>"; };
+		7833E8B72EDACA56004D188F /* Society_Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Society_Main.swift; sourceTree = "<group>"; };
+		7833E8B82EDACA56004D188F /* Society_Panel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Society_Panel.swift; sourceTree = "<group>"; };
+		7833E8B92EDACA56004D188F /* Society_Promises_View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Society_Promises_View.swift; sourceTree = "<group>"; };
+		7833E8BA2EDACA56004D188F /* Society_Propose_Promise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Society_Propose_Promise.swift; sourceTree = "<group>"; };
+		7833E8BB2EDACA56004D188F /* Society_Rally_View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Society_Rally_View.swift; sourceTree = "<group>"; };
+		7833E8BC2EDACA56004D188F /* Society_Summary_Phase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Society_Summary_Phase.swift; sourceTree = "<group>"; };
+		7833E8BD2EDACA56004D188F /* Society_Variables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Society_Variables.swift; sourceTree = "<group>"; };
+		7833E8BE2EDACA56004D188F /* Society_Voting_Phase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Society_Voting_Phase.swift; sourceTree = "<group>"; };
+		7833E8BF2EDACA56004D188F /* Transportation_View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transportation_View.swift; sourceTree = "<group>"; };
+		7833E8C02EDACA56004D188F /* Treasury_View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Treasury_View.swift; sourceTree = "<group>"; };
+		7833E8C12EDACA56004D188F /* Untitled.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Untitled.swift; sourceTree = "<group>"; };
 		78925E682E8913DD002C84F3 /* Society Game.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Society Game.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		78925E762E8913DE002C84F3 /* Society GameTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Society GameTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		78925E802E8913DE002C84F3 /* Society GameUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Society GameUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		78925E6A2E8913DD002C84F3 /* Society Game */ = {
+		7833E8F12EDACAB9004D188F /* society_backend */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Society Game";
+			path = society_backend;
 			sourceTree = "<group>";
 		};
-		78925E792E8913DE002C84F3 /* Society GameTests */ = {
+		7833E8FF2EDACFCF004D188F /* web_version_frontend */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Society GameTests";
-			sourceTree = "<group>";
-		};
-		78925E832E8913DE002C84F3 /* Society GameUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Society GameUITests";
+			path = web_version_frontend;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -72,12 +144,54 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7833E8C22EDACA56004D188F /* Products */ = {
+			isa = PBXGroup;
+			name = Products;
+			sourceTree = "<group>";
+		};
 		78925E5F2E8913DD002C84F3 = {
 			isa = PBXGroup;
 			children = (
-				78925E6A2E8913DD002C84F3 /* Society Game */,
-				78925E792E8913DE002C84F3 /* Society GameTests */,
-				78925E832E8913DE002C84F3 /* Society GameUITests */,
+				7833E8FF2EDACFCF004D188F /* web_version_frontend */,
+				7833E8F12EDACAB9004D188F /* society_backend */,
+				7833E88C2EDACA56004D188F /* Agriculture_View.swift */,
+				7833E88D2EDACA56004D188F /* Assets.xcassets */,
+				7833E88E2EDACA56004D188F /* CampaignCommOnly.swift */,
+				7833E88F2EDACA56004D188F /* Campaigning_Phase.swift */,
+				7833E8932EDACA56004D188F /* CommScreenRunning.swift */,
+				7833E8942EDACA56004D188F /* Communications.swift */,
+				7833E8952EDACA56004D188F /* Construction_View.swift */,
+				7833E8962EDACA56004D188F /* ConstructionBuilding.swift */,
+				7833E8972EDACA56004D188F /* ConstructionScreen.swift */,
+				7833E8982EDACA56004D188F /* Education_View.swift */,
+				7833E8992EDACA56004D188F /* ExecutiveOrders.swift */,
+				7833E89A2EDACA56004D188F /* GAMERUNNING.swift */,
+				7833E89B2EDACA56004D188F /* GameState.swift */,
+				7833E89E2EDACA56004D188F /* HOMEview.swift */,
+				7833E89F2EDACA56004D188F /* In_Game_Def.swift */,
+				7833E8A02EDACA56004D188F /* In_Game_Manager.swift */,
+				7833E8A12EDACA56004D188F /* Inbox.swift */,
+				7833E8A82EDACA56004D188F /* Labor_View.swift */,
+				7833E8A92EDACA56004D188F /* LOCALROOMsetup.swift */,
+				7833E8AA2EDACA56004D188F /* Pres_View.swift */,
+				7833E8AB2EDACA56004D188F /* Prez_Action_View.swift */,
+				7833E8AC2EDACA56004D188F /* PROFILE.swift */,
+				7833E8AD2EDACA56004D188F /* PubHealth_View.swift */,
+				7833E8AE2EDACA56004D188F /* ResourceAllo_View.swift */,
+				7833E8AF2EDACA56004D188F /* SJCC_View.swift */,
+				7833E8B02EDACA56004D188F /* Society Game.xcodeproj */,
+				7833E8B62EDACA56004D188F /* Society_Game.entitlements */,
+				7833E8B72EDACA56004D188F /* Society_Main.swift */,
+				7833E8B82EDACA56004D188F /* Society_Panel.swift */,
+				7833E8B92EDACA56004D188F /* Society_Promises_View.swift */,
+				7833E8BA2EDACA56004D188F /* Society_Propose_Promise.swift */,
+				7833E8BB2EDACA56004D188F /* Society_Rally_View.swift */,
+				7833E8BC2EDACA56004D188F /* Society_Summary_Phase.swift */,
+				7833E8BD2EDACA56004D188F /* Society_Variables.swift */,
+				7833E8BE2EDACA56004D188F /* Society_Voting_Phase.swift */,
+				7833E8BF2EDACA56004D188F /* Transportation_View.swift */,
+				7833E8C02EDACA56004D188F /* Treasury_View.swift */,
+				7833E8C12EDACA56004D188F /* Untitled.swift */,
 				78925E692E8913DD002C84F3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -108,7 +222,8 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				78925E6A2E8913DD002C84F3 /* Society Game */,
+				7833E8F12EDACAB9004D188F /* society_backend */,
+				7833E8FF2EDACFCF004D188F /* web_version_frontend */,
 			);
 			name = "Society Game";
 			packageProductDependencies = (
@@ -130,9 +245,6 @@
 			dependencies = (
 				78925E782E8913DE002C84F3 /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				78925E792E8913DE002C84F3 /* Society GameTests */,
-			);
 			name = "Society GameTests";
 			packageProductDependencies = (
 			);
@@ -152,9 +264,6 @@
 			);
 			dependencies = (
 				78925E822E8913DE002C84F3 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				78925E832E8913DE002C84F3 /* Society GameUITests */,
 			);
 			name = "Society GameUITests";
 			packageProductDependencies = (
@@ -198,6 +307,12 @@
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 78925E692E8913DD002C84F3 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 7833E8C22EDACA56004D188F /* Products */;
+					ProjectRef = 7833E8B02EDACA56004D188F /* Society Game.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				78925E672E8913DD002C84F3 /* Society Game */,
@@ -212,6 +327,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7833E8ED2EDACA56004D188F /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +352,41 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7833E8C42EDACA56004D188F /* GAMERUNNING.swift in Sources */,
+				7833E8C52EDACA56004D188F /* Untitled.swift in Sources */,
+				7833E8C62EDACA56004D188F /* SJCC_View.swift in Sources */,
+				7833E8C72EDACA56004D188F /* Communications.swift in Sources */,
+				7833E8C82EDACA56004D188F /* Society_Variables.swift in Sources */,
+				7833E8C92EDACA56004D188F /* Society_Main.swift in Sources */,
+				7833E8CA2EDACA56004D188F /* Prez_Action_View.swift in Sources */,
+				7833E8CB2EDACA56004D188F /* In_Game_Manager.swift in Sources */,
+				7833E8CD2EDACA56004D188F /* ExecutiveOrders.swift in Sources */,
+				7833E8CE2EDACA56004D188F /* Education_View.swift in Sources */,
+				7833E8CF2EDACA56004D188F /* Society_Propose_Promise.swift in Sources */,
+				7833E8D02EDACA56004D188F /* PubHealth_View.swift in Sources */,
+				7833E8D12EDACA56004D188F /* Society_Voting_Phase.swift in Sources */,
+				7833E8D22EDACA56004D188F /* Society_Promises_View.swift in Sources */,
+				7833E8D32EDACA56004D188F /* ConstructionScreen.swift in Sources */,
+				7833E8D42EDACA56004D188F /* Construction_View.swift in Sources */,
+				7833E8D52EDACA56004D188F /* Agriculture_View.swift in Sources */,
+				7833E8D62EDACA56004D188F /* Inbox.swift in Sources */,
+				7833E8D82EDACA56004D188F /* ConstructionBuilding.swift in Sources */,
+				7833E8D92EDACA56004D188F /* Transportation_View.swift in Sources */,
+				7833E8DA2EDACA56004D188F /* Society_Panel.swift in Sources */,
+				7833E8DB2EDACA56004D188F /* CommScreenRunning.swift in Sources */,
+				7833E8DC2EDACA56004D188F /* Society_Summary_Phase.swift in Sources */,
+				7833E8DD2EDACA56004D188F /* Campaigning_Phase.swift in Sources */,
+				7833E8DE2EDACA56004D188F /* Pres_View.swift in Sources */,
+				7833E8DF2EDACA56004D188F /* LOCALROOMsetup.swift in Sources */,
+				7833E8E02EDACA56004D188F /* GameState.swift in Sources */,
+				7833E8E12EDACA56004D188F /* PROFILE.swift in Sources */,
+				7833E8E22EDACA56004D188F /* Labor_View.swift in Sources */,
+				7833E8E32EDACA56004D188F /* Treasury_View.swift in Sources */,
+				7833E8E42EDACA56004D188F /* HOMEview.swift in Sources */,
+				7833E8E52EDACA56004D188F /* CampaignCommOnly.swift in Sources */,
+				7833E8E62EDACA56004D188F /* In_Game_Def.swift in Sources */,
+				7833E8E72EDACA56004D188F /* Society_Rally_View.swift in Sources */,
+				7833E8E92EDACA56004D188F /* ResourceAllo_View.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -388,7 +539,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "Society Game/Society_Game.entitlements";
+				CODE_SIGN_ENTITLEMENTS = Society_Game.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
@@ -425,7 +576,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "Society Game/Society_Game.entitlements";
+				CODE_SIGN_ENTITLEMENTS = Society_Game.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
