@@ -5,6 +5,13 @@
 let socket = null;
 let playerID = null;
 let roomCode = null;
+const EMOJIS = ["😎","🤠","🙂","🥸","🤓","🙂‍↕️","😇"];
+function randomEmoji() {
+    return EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
+}
+let players = [null, null, null, null, null];
+
+
 
 // 🌍 Your deployed backend URL
 const BACKEND_HTTP = "https://society-game.onrender.com";
@@ -61,6 +68,10 @@ function openSocket() {
         switch (data.type) {
             case "roles_available":
                 renderRoles(data.roles);
+                break;
+                
+            case "player_joined":
+                addNewPlayer(data.name);
                 break;
 
             case "chat":
@@ -148,15 +159,53 @@ function renderVoting(options) {
 // --------------------------------------------------
 // HOST ROOM
 // --------------------------------------------------
-function hostRoom() {
+let hostName = null;
+let hostEmoji = null;
+
+function finishHostSetup() {
+    hostName = document.getElementById("hostNameInput").value.trim();
+    if (!hostName) {
+        alert("Enter your name!");
+        return;
+    }
+
+    // Generate host emoji
+    hostEmoji = randomEmoji();
+
+    // Create room
     fetch(`${BACKEND_HTTP}/create`, { method: "POST" })
+        .then(r => r.json())
+        .then(data => {
+            roomCode = data.code;
+            showQRCode(data.joinURL, data.code);
+
+            // Fill lobby with empty slots first
+            setupLobbyUI();
+
+            // Host joins room as Player 1
+            joinAsHost();
+        });
+}
+function joinAsHost() {
+    fetch(`${BACKEND_HTTP}/join`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: roomCode, name: hostName })
+    })
     .then(r => r.json())
     .then(data => {
-        console.log("Created room:", data);
-        showQRCode(data.joinURL, data.code);
-    })
-    .catch(err => console.error("HOST ERR:", err));
+        playerID = data.playerID;
+        openSocket();
+
+        // Immediately mark host as slot #1
+        players[0] = {
+            name: hostName,
+            emoji: hostEmoji
+        };
+        updateLobbyUI();
+    });
 }
+
 
 // --------------------------------------------------
 // QR CODE PAGE
@@ -171,4 +220,49 @@ function showQRCode(joinURL, code) {
     });
 
     document.getElementById("qrRoomCode").innerText = `Room Code: ${code}`;
+}
+
+function setupLobbyUI() {
+    const lobby = document.getElementById("playerLobby");
+    lobby.innerHTML = "";
+
+    for (let i = 0; i < 5; i++) {
+        const slot = document.createElement("div");
+        slot.className = "playerSlot";
+        slot.id = `slot_${i}`;
+
+        slot.innerHTML = `
+            <div class="waitingText">Waiting...</div>
+        `;
+
+        lobby.appendChild(slot);
+    }
+}
+
+function updateLobbyUI() {
+    players.forEach((p, i) => {
+        const slot = document.getElementById(`slot_${i}`);
+
+        if (!p) {
+            slot.innerHTML = `<div class="waitingText">Waiting...</div>`;
+        } else {
+            slot.innerHTML = `
+                <div class="playerEmoji">${p.emoji}</div>
+                <div class="playerName">${p.name}</div>
+            `;
+        }
+    });
+}
+
+function addNewPlayer(name) {
+    // Find empty slot
+    const idx = players.findIndex(p => p === null);
+    if (idx === -1) return;
+
+    players[idx] = {
+        name,
+        emoji: randomEmoji()
+    };
+
+    updateLobbyUI();
 }

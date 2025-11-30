@@ -57,7 +57,7 @@ func (m *Manager) HandleCreateRoom(w http.ResponseWriter, r *http.Request) {
     m.Rooms[code] = room
 
     // 🔥 CHANGE THIS TO YOUR WIFI IP
-    joinURL := "http://192.168.1.42:8080/?room=" + code
+    joinURL := "https://society-game-web.onrender.com/?room=" + code
 
     w.Header().Set("Content-Type", "application/json")
 
@@ -104,6 +104,11 @@ func (m *Manager) HandleJoinRoom(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(map[string]string{
         "playerID": id,
     })
+    
+    m.Broadcast(req.Code, []byte(fmt.Sprintf(
+    `{"type":"player_joined","name":"%s"}`,
+    req.Name,
+)))
 }
 
 // ------------------------------------------

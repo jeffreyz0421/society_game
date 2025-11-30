@@ -59,6 +59,16 @@
         <h2 class="sectionTitle">Voting Stage</h2>
         <div id="voteOptions" class="voteGrid"></div>
     </div>
+    
+    <!-- HOST NAME INPUT SCREEN -->
+    <div id="screen_hostName" class="screen hidden">
+        <h2 class="sectionTitle">Choose Your Name</h2>
+
+        <input id="hostNameInput" placeholder="Your Name">
+
+        <button class="btn hostBtn" onclick="finishHostSetup()">Continue</button>
+    </div>
+
 
     <!-- ▼ QR SCREEN ▼ -->
     <div id="screen_qr" class="screen hidden">
@@ -68,8 +78,15 @@
 
         <p id="qrRoomCode" class="qrText"></p>
 
+        <h3 class="sectionTitle" style="margin-top:30px;">Players</h3>
+
+        <div id="playerLobby" class="lobbyGrid">
+            <!-- Slots will be auto-filled in JS -->
+        </div>
+
         <button class="btn backBtn" onclick="show('screen_join')">Back</button>
     </div>
+
 
 </div>
 
