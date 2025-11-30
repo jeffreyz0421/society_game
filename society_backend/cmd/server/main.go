@@ -6,36 +6,45 @@ import (
 
     "github.com/gorilla/mux"
     "github.com/gorilla/websocket"
-
-    // FIXED: use your module name
     "society_backend/internal/room"
 )
 
 var upgrader = websocket.Upgrader{
-    CheckOrigin: func(r *http.Request) bool { return true },
+    CheckOrigin: func(r *http.Request) bool { return true }, // 🔥 allow WS from anywhere
 }
 
 func main() {
-    // initialize room manager
     manager := room.NewManager()
 
-    // router
     r := mux.NewRouter()
 
-    // REST: create / join room
-    r.HandleFunc("/create", manager.HandleCreateRoom).Methods("POST")
-    r.HandleFunc("/join", manager.HandleJoinRoom).Methods("POST")
+    // 🔥 GLOBAL CORS FIX
+    r.Use(func(next http.Handler) http.Handler {
+        return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+            w.Header().Set("Access-Control-Allow-Origin", "*")
+            w.Header().Set("Access-Control-Allow-Headers", "*")
+            w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+            if r.Method == "OPTIONS" {
+                return
+            }
+            next.ServeHTTP(w, r)
+        })
+    })
 
-    // WebSocket: /ws/{code}/{playerID}
+    // REST endpoints
+    r.HandleFunc("/create", manager.HandleCreateRoom).Methods("POST", "OPTIONS")
+    r.HandleFunc("/join", manager.HandleJoinRoom).Methods("POST", "OPTIONS")
+
+    // Websocket
     r.HandleFunc("/ws/{code}/{playerID}", func(w http.ResponseWriter, r *http.Request) {
         conn, err := upgrader.Upgrade(w, r, nil)
         if err != nil {
-            log.Println("WS upgrade error:", err)
+            log.Println("WS error:", err)
             return
         }
         manager.HandleWS(w, r, conn)
     })
 
-    log.Println("🚀 Server running at http://localhost:8080")
+    log.Println("🚀 Server running at :8080")
     http.ListenAndServe(":8080", r)
 }

@@ -91,19 +91,18 @@ function renderRoles(roles) {
 
     roles.forEach(role => {
         const btn = document.createElement("button");
-        btn.innerText = role;
         btn.className = "roleButton";
+        btn.innerText = role;
 
-        btn.onclick = () => {
-            socket.send(JSON.stringify({
-                type: "select_role",
-                role
-            }));
-        };
+        btn.onclick = () => socket.send(JSON.stringify({
+            type: "select_role",
+            role
+        }));
 
         container.appendChild(btn);
     });
 }
+
 
 // --------------------------------------------------
 // CHAT
@@ -138,16 +137,13 @@ function renderVoting(options) {
         btn.className = "voteButton";
         btn.innerText = `Vote for: ${role}`;
 
-        btn.onclick = () => {
-            socket.send(JSON.stringify({
-                type: "vote",
-                role
-            }));
-        };
+        btn.onclick = () =>
+            socket.send(JSON.stringify({ type: "vote", role }));
 
         container.appendChild(btn);
     });
 }
+
 
 // --------------------------------------------------
 // HOST ROOM

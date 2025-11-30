@@ -2,53 +2,73 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Society Game Web Alpha</title>
+    <title>Society Game (Web Alpha)</title>
     <link rel="stylesheet" href="styles.css">
+
+    <!-- Fun round cartoon font -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 </head>
 <body>
 
-<div id="app">
-    <h1>🏛️ Society Game (Web Alpha)</h1>
+<div id="mainContainer">
 
-    <!-- JOIN SCREEN -->
+    <!-- ▼ TITLE ▼ -->
+    <div id="header">
+        <img src="https://cdn-icons-png.flaticon.com/512/4221/4221419.png" class="title-icon">
+        <h1>Society Game</h1>
+        <h2 class="subtitle">✨ Web Alpha Version ✨</h2>
+    </div>
+
+    <!-- ▼ JOIN SCREEN ▼ -->
     <div id="screen_join" class="screen">
-        <h2>Join Room</h2>
-        <input id="roomCodeInput" placeholder="Enter room code..." />
-        <input id="playerNameInput" placeholder="Your name..." />
-        <button onclick="joinRoom()">Join</button>
-        <button onclick="hostRoom()">Host a Room</button>
+        <h2 class="sectionTitle">Join a Room</h2>
+
+        <div class="inputRow">
+            <input id="roomCodeInput" placeholder="Room Code">
+            <input id="playerNameInput" placeholder="Your Name">
+        </div>
+
+        <div class="buttonRow">
+            <button class="btn joinBtn" onclick="joinRoom()">Join</button>
+            <button class="btn hostBtn" onclick="hostRoom()">Host Room</button>
+        </div>
     </div>
 
-    <!-- ROLE SELECTION -->
+    <!-- ▼ ROLE SELECTION ▼ -->
     <div id="screen_role" class="screen hidden">
-        <h2>Select Your Role</h2>
-        <div id="roleList"></div>
+        <h2 class="sectionTitle">Choose Your Role</h2>
+        <div id="roleList" class="roleGrid"></div>
     </div>
 
-    <!-- CAMPAIGNING -->
+    <!-- ▼ CAMPAIGN MODE ▼ -->
     <div id="screen_campaigning" class="screen hidden">
-        <h2>Campaigning Stage</h2>
+        <h2 class="sectionTitle">Campaigning</h2>
 
-        <textarea id="chatInput" placeholder="Type message..."></textarea>
-        <button onclick="sendChat()">Send</button>
-
-        <h3>Messages</h3>
         <div id="chatBox"></div>
+
+        <div class="inputRow">
+            <input id="chatInput" placeholder="Type a message...">
+            <button class="btn sendBtn" onclick="sendChat()">Send</button>
+        </div>
     </div>
 
-    <!-- VOTING -->
+    <!-- ▼ VOTING ▼ -->
     <div id="screen_voting" class="screen hidden">
-        <h2>Voting Stage</h2>
-        <div id="voteOptions"></div>
+        <h2 class="sectionTitle">Voting Stage</h2>
+        <div id="voteOptions" class="voteGrid"></div>
     </div>
 
-    <!-- QR CODE SCREEN -->
+    <!-- ▼ QR SCREEN ▼ -->
     <div id="screen_qr" class="screen hidden">
-        <h2>Scan to Join</h2>
-        <canvas id="qrCanvas"></canvas>
-        <p id="qrRoomCode" style="font-size:20px; margin-top:10px;"></p>
-        <button onclick="show('screen_join')">Back</button>
+        <h2 class="sectionTitle">Scan to Join</h2>
+
+        <canvas id="qrCanvas" class="qrCanvas"></canvas>
+
+        <p id="qrRoomCode" class="qrText"></p>
+
+        <button class="btn backBtn" onclick="show('screen_join')">Back</button>
     </div>
 
 </div>
