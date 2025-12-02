@@ -196,3 +196,84 @@ input {
     transform: scale(1.05);
     background-color: #ffdb6e;
 }
+/* ROUND TABLE LAYOUT */
+#roundTable {
+    position: relative;
+    width: 480px;
+    height: 480px;
+    margin: 30px auto;
+    border-radius: 50%;
+    background: #fff3d6;
+    border: 6px solid #e7d3a1;
+    box-shadow: 0px 8px 0px #d2b98a;
+}
+
+/* PLAYER SEAT */
+.playerSeat {
+    position: absolute;
+    width: 110px;
+    height: 110px;
+    background: white;
+    border-radius: 50%;
+    border: 4px solid #d4c8ba;
+    text-align: center;
+    font-size: 26px;
+    padding-top: 18px;
+    box-shadow: 0 5px 0 #c5b196;
+    font-family: "Fredoka", sans-serif;
+}
+
+/* Positions around circle */
+#seat0 { top: 0; left: 50%; transform: translateX(-50%); }
+#seat1 { top: 25%; right: 0; transform: translateY(-50%); }
+#seat2 { top: 75%; right: 0; transform: translateY(-50%); }
+#seat3 { bottom: 0; left: 50%; transform: translateX(-50%); }
+#seat4 { top: 50%; left: 0; transform: translateY(-50%); }
+
+/* BUTTON ROW */
+.campaignButtons {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+}
+
+.actionBtn {
+    background: #ffd86b;
+    font-size: 24px;
+    padding: 14px 28px;
+    border-radius: 16px;
+    border: 4px solid #e4c35e;
+    box-shadow: 0px 6px 0px #caae4d;
+}
+.actionBtn:active {
+    transform: translateY(3px);
+    box-shadow: 0px 2px 0px #caae4d;
+}
+/* CHAT SCREEN LAYOUT */
+.chatLayout {
+    width: 80%;
+    margin: auto;
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    border: 4px solid #d9ccb5;
+    box-shadow: 0 6px 0 #c6b59b;
+}
+
+.chatHistory {
+    height: 320px;
+    overflow-y: scroll;
+    padding: 15px;
+    border: 3px solid #e6dcc9;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.chatBubble {
+    margin: 8px 0;
+    text-align: left;
+}
+.chatBubble strong {
+    color: #444;
+}

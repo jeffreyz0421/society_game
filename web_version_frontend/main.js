@@ -88,7 +88,9 @@ function openSocket() {
 
             case "chat":
                 addChatMessage(data.from, data.text);
+                addChatMessageToHistory(data.from, data.text);
                 break;
+
 
             case "start_campaigning":
                 show("screen_campaigning");
@@ -238,7 +240,25 @@ function addNewPlayer(name) {
 
     players[idx] = { name, emoji: randomEmoji() };
     updateLobbyUI();
+    updateRoundTable();   // ← ADD THIS
 }
+function updateRoundTable() {
+    for (let i = 0; i < 5; i++) {
+        const seat = document.getElementById(`seat${i}`);
+        const p = players[i];
+
+        if (!seat) continue;
+        if (!p) {
+            seat.innerHTML = "<div style='margin-top:30px;color:#aaa;font-size:18px;'>Waiting...</div>";
+        } else {
+            seat.innerHTML = `
+                <div style="font-size:40px">${p.emoji}</div>
+                <div style="font-size:18px;margin-top:4px;font-weight:600;">${p.name}</div>
+            `;
+        }
+    }
+}
+
 
 // --------------------------------------------------
 // START GAME (host only)
@@ -247,4 +267,28 @@ function startGame() {
     socket.send(JSON.stringify({
         type: "start_campaigning"
     }));
+}
+
+function openChat() {
+    show("screen_chat");
+}
+
+function sendChat2() {
+    const input = document.getElementById("chatInput2");
+    const text = input.value.trim();
+    if (!text) return;
+
+    socket.send(JSON.stringify({ type: "chat", text }));
+    input.value = "";
+}
+
+function addChatMessageToHistory(from, text) {
+    const box = document.getElementById("chatHistory");
+    if (!box) return;
+
+    const el = document.createElement("div");
+    el.className = "chatBubble";
+    el.innerHTML = `<strong>${from}:</strong> ${text}`;
+    box.appendChild(el);
+    box.scrollTop = box.scrollHeight;
 }

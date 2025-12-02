@@ -78,21 +78,50 @@
 
     <!-- CAMPAIGNING -->
     <div id="screen_campaigning" class="screen hidden">
-        <h2 class="sectionTitle">Campaigning</h2>
 
-        <div id="chatBox"></div>
+        <h2 class="sectionTitle">Campaigning Stage</h2>
 
-        <div class="inputRow">
-            <input id="chatInput" placeholder="Type a message...">
-            <button class="btn sendBtn" onclick="sendChat()">Send</button>
+        <!-- ROUND TABLE -->
+        <div id="roundTable">
+            <div class="playerSeat" id="seat0"></div>
+            <div class="playerSeat" id="seat1"></div>
+            <div class="playerSeat" id="seat2"></div>
+            <div class="playerSeat" id="seat3"></div>
+            <div class="playerSeat" id="seat4"></div>
         </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="campaignButtons">
+            <button class="btn actionBtn" onclick="openChat()">💬 Chat</button>
+            <button class="btn actionBtn">📢 Rally</button>
+            <button class="btn actionBtn">🤝 Promise</button>
+        </div>
+
     </div>
+
 
     <!-- VOTING -->
     <div id="screen_voting" class="screen hidden">
         <h2 class="sectionTitle">Voting Stage</h2>
         <div id="voteOptions" class="voteGrid"></div>
     </div>
+    
+    <!-- CHAT SCREEN -->
+    <div id="screen_chat" class="screen hidden">
+        <h2 class="sectionTitle">Campaign Chat</h2>
+
+        <div class="chatLayout">
+            <div id="chatHistory" class="chatHistory"></div>
+
+            <div class="chatInputRow">
+                <input id="chatInput2" placeholder="Type a message...">
+                <button class="btn sendBtn" onclick="sendChat2()">Send</button>
+            </div>
+
+            <button class="btn backBtn" onclick="show('screen_campaigning')">Back</button>
+        </div>
+    </div>
+
 
 </div>
 
