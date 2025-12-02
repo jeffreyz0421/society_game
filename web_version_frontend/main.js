@@ -99,6 +99,11 @@ function openSocket() {
             case "start_countdown":
                 startCountdown();
                 break;
+                
+            case "nomination":
+                console.log(`${data.player} nominated for ${data.role}`);
+                break;
+
 
             case "start_voting":
                 show("screen_voting");
@@ -323,11 +328,11 @@ function startCountdown() {
 
 function renderNominationRoles() {
     const roles = [
-        "President (+200 points)",
-        "Chief Justice (+200 points)",
-        "Department of Education (+100 points)",
-        "Department of Labor (+100 points)",
-        "Department of Construction (+100 points)"
+        "President (+200 points, <span style='font-size:16px'>if got the position</span>)",
+        "Chief Justice (+200 points, <span style='font-size:16px'>if got the position</span>)",
+        "Department of Education (+100 points, <span style='font-size:16px'>if got the position</span>)",
+        "Department of Labor (+100 points, <span style='font-size:16px'>if got the position</span>)",
+        "Department of Construction (+100 points, <span style='font-size:16px'>if got the position</span>)"
     ];
 
     const container = document.getElementById("nominationList");
@@ -336,7 +341,7 @@ function renderNominationRoles() {
     roles.forEach(role => {
         const btn = document.createElement("button");
         btn.className = "roleButton";
-        btn.innerText = role;
+        btn.innerHTML = role;  // IMPORTANT: innerHTML instead of innerText
 
         btn.onclick = () => {
             socket.send(JSON.stringify({
@@ -344,8 +349,14 @@ function renderNominationRoles() {
                 role
             }));
 
-            // 🔥 DO NOT go to campaigning yet!
-            // Wait for backend to send `"start_campaigning"`
+            // save choice for UI
+            window.nominationChoice = role;
+
+            // update campaigning screen text
+            const desired = document.getElementById("campaignDesiredRole");
+            if (desired) desired.innerHTML = "Desired Position: " + role;
+
+            show("screen_campaigning");
         };
 
         container.appendChild(btn);
