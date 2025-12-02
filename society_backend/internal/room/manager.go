@@ -148,11 +148,34 @@ func (m *Manager) HandleWS(w http.ResponseWriter, r *http.Request, conn *websock
         var data map[string]interface{}
         json.Unmarshal(msg, &data)
 
-        // START GAME
+        // START COUNTDOWN (new start signal)
+        if data["type"] == "start_countdown" {
+            m.Broadcast(code, []byte(`{"type":"start_countdown"}`))
+            continue
+        }
+
+        // NOMINATION STAGE
+        if data["type"] == "nomination" {
+            role := data["role"].(string)
+
+            room.Mutex.Lock()
+            player.RoleWant = role
+            room.Mutex.Unlock()
+
+            // Broadcast nomination event to all players
+            m.Broadcast(code, []byte(fmt.Sprintf(
+                `{"type":"nomination","player":"%s","role":"%s"}`,
+                player.Name, role,
+            )))
+            continue
+        }
+
+        // MOVE TO CAMPAIGNING
         if data["type"] == "start_campaigning" {
             m.Broadcast(code, []byte(`{"type":"start_campaigning"}`))
             continue
         }
+
 
         // Default broadcast
         m.Broadcast(code, msg)

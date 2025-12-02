@@ -81,6 +81,10 @@ function openSocket() {
                 // Everyone moves to role selection
                 show("screen_role");
                 break;
+                
+            case "nomination":
+                console.log(`${data.player} nominated ${data.role}`);
+                break;
 
             case "roles_available":
                 renderRoles(data.roles);
@@ -92,8 +96,8 @@ function openSocket() {
                 break;
 
 
-            case "start_campaigning":
-                show("screen_campaigning");
+            case "start_countdown":
+                startCountdown();
                 break;
 
             case "start_voting":
@@ -265,7 +269,7 @@ function updateRoundTable() {
 // --------------------------------------------------
 function startGame() {
     socket.send(JSON.stringify({
-        type: "start_campaigning"
+        type: "start_countdown"
     }));
 }
 
@@ -291,4 +295,59 @@ function addChatMessageToHistory(from, text) {
     el.innerHTML = `<strong>${from}:</strong> ${text}`;
     box.appendChild(el);
     box.scrollTop = box.scrollHeight;
+}
+function startCountdown() {
+    show("screen_countdown");
+
+    let t = 5;
+    document.getElementById("countdownNumber").innerText = t;
+
+    const interval = setInterval(() => {
+        t--;
+        if (t > 0) {
+            document.getElementById("countdownNumber").innerText = t;
+        } else if (t === 0) {
+            document.getElementById("countdownNumber").innerText = "🎤";
+            document.getElementById("countdownMessage").innerText = "Prepare to debate!";
+        } else {
+            clearInterval(interval);
+
+            // 🔥 SHOW NOMINATION SCREEN
+            show("screen_nomination");
+
+            // 🔥 LOAD NOMINATION BUTTONS
+            renderNominationRoles();
+        }
+    }, 1000);
+}
+
+function renderNominationRoles() {
+    const roles = [
+        "President (+200 points)",
+        "Chief Justice (+200 points)",
+        "Department of Education (+100 points)",
+        "Department of Labor (+100 points)",
+        "Department of Construction (+100 points)"
+    ];
+
+    const container = document.getElementById("nominationList");
+    container.innerHTML = "";
+
+    roles.forEach(role => {
+        const btn = document.createElement("button");
+        btn.className = "roleButton";
+        btn.innerText = role;
+
+        btn.onclick = () => {
+            socket.send(JSON.stringify({
+                type: "nomination",
+                role
+            }));
+
+            // 🔥 DO NOT go to campaigning yet!
+            // Wait for backend to send `"start_campaigning"`
+        };
+
+        container.appendChild(btn);
+    });
 }

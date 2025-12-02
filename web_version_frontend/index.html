@@ -69,17 +69,52 @@
 
         <button class="btn backBtn" onclick="show('screen_join')">Back</button>
     </div>
-
-    <!-- ROLE SELECTION -->
-    <div id="screen_role" class="screen hidden">
-        <h2 class="sectionTitle">Choose Your Role</h2>
-        <div id="roleList" class="roleGrid"></div>
+    
+    <!-- COUNTDOWN SCREEN -->
+    <div id="screen_countdown" class="screen hidden">
+        <h2 class="sectionTitle">Game Starting...</h2>
+        <div id="countdownNumber" style="
+            font-size: 80px;
+            font-weight: 700;
+            margin-top: 40px;
+        ">5</div>
+        <div id="countdownMessage" style="
+            font-size: 28px;
+            margin-top: 25px;
+            color: #555;
+            font-weight: 600;
+        "></div>
     </div>
+    
+    <!-- NOMINATION SCREEN -->
+    <div id="screen_nomination" class="screen hidden">
+        <h2 class="sectionTitle">Nomination Stage</h2>
+        <p style="
+            font-size:20px;
+            font-weight:500;
+            margin-bottom:20px;
+            color:#666;
+        ">
+            Choose the position you want to run for:
+        </p>
+
+        <div id="nominationList" class="roleGrid"></div>
+    </div>
+
 
     <!-- CAMPAIGNING -->
     <div id="screen_campaigning" class="screen hidden">
 
         <h2 class="sectionTitle">Campaigning Stage</h2>
+        
+        <p style="
+            font-size:22px;
+            font-weight:600;
+            margin-bottom:20px;
+            color:#555;
+        ">
+            Society: time to campaign and buy votes to get the positions you desire!
+        </p>
 
         <!-- ROUND TABLE -->
         <div id="roundTable">
