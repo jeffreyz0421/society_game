@@ -149,8 +149,8 @@ func (m *Manager) HandleWS(w http.ResponseWriter, r *http.Request, conn *websock
         json.Unmarshal(msg, &data)
 
         // START GAME
-        if data["type"] == "start_game" {
-            m.Broadcast(code, []byte(`{"type":"start_game"}`))
+        if data["type"] == "start_campaigning" {
+            m.Broadcast(code, []byte(`{"type":"start_campaigning"}`))
             continue
         }
 
