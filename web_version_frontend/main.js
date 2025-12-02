@@ -90,7 +90,7 @@ function openSocket() {
                 addChatMessage(data.from, data.text);
                 break;
 
-            case "start_campaign":
+            case "start_campaigning":
                 show("screen_campaigning");
                 break;
 
@@ -245,7 +245,6 @@ function addNewPlayer(name) {
 // --------------------------------------------------
 function startGame() {
     socket.send(JSON.stringify({
-        type: "start_game",
-        code: roomCode
+        type: "start_campaigning"
     }));
 }
