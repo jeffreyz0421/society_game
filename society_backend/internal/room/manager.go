@@ -2,20 +2,20 @@ package room
 
 import (
     "encoding/json"
+    "fmt"
     "log"
     "math/rand"
     "net/http"
     "sync"
     "time"
-    "fmt"
 
     "github.com/gorilla/mux"
     "github.com/gorilla/websocket"
 )
 
-// ------------------------------------------
-// TYPES
-// ------------------------------------------
+/// ------------------------------------------------------
+/// TYPES
+/// ------------------------------------------------------
 
 type Player struct {
     ID       string
@@ -35,7 +35,9 @@ type Manager struct {
     Rooms map[string]*Room
 }
 
-// ------------------------------------------
+/// ------------------------------------------------------
+/// INITIALIZER
+/// ------------------------------------------------------
 
 func NewManager() *Manager {
     return &Manager{
@@ -43,9 +45,9 @@ func NewManager() *Manager {
     }
 }
 
-// ------------------------------------------
-// CREATE ROOM
-// ------------------------------------------
+/// ------------------------------------------------------
+/// CREATE ROOM
+/// ------------------------------------------------------
 
 func (m *Manager) HandleCreateRoom(w http.ResponseWriter, r *http.Request) {
     code := generateRoomCode()
@@ -57,22 +59,20 @@ func (m *Manager) HandleCreateRoom(w http.ResponseWriter, r *http.Request) {
 
     m.Rooms[code] = room
 
-    // 🔥 CHANGE THIS TO YOUR WIFI IP
     joinURL := "https://society-game-web.onrender.com/?room=" + code
-
-    w.Header().Set("Content-Type", "application/json")
 
     resp := map[string]string{
         "code":    code,
         "joinURL": joinURL,
     }
 
+    w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode(resp)
 }
 
-// ------------------------------------------
-// JOIN ROOM
-// ------------------------------------------
+/// ------------------------------------------------------
+/// JOIN ROOM
+/// ------------------------------------------------------
 
 func (m *Manager) HandleJoinRoom(w http.ResponseWriter, r *http.Request) {
     type JoinRequest struct {
@@ -85,7 +85,7 @@ func (m *Manager) HandleJoinRoom(w http.ResponseWriter, r *http.Request) {
 
     room, ok := m.Rooms[req.Code]
     if !ok {
-        http.Error(w, "Room not found", 404)
+        http.Error(w, "Room not found", http.StatusNotFound)
         return
     }
 
@@ -105,16 +105,16 @@ func (m *Manager) HandleJoinRoom(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(map[string]string{
         "playerID": id,
     })
-    
+
+    // Notify players
     m.Broadcast(req.Code, []byte(fmt.Sprintf(
-    `{"type":"player_joined","name":"%s"}`,
-    req.Name,
-)))
+        `{"type":"player_joined","name":"%s"}`, req.Name,
+    )))
 }
 
-// ------------------------------------------
-// WEBSOCKET
-// ------------------------------------------
+/// ------------------------------------------------------
+/// WEBSOCKET HANDLER
+/// ------------------------------------------------------
 
 func (m *Manager) HandleWS(w http.ResponseWriter, r *http.Request, conn *websocket.Conn) {
     vars := mux.Vars(r)
@@ -135,7 +135,6 @@ func (m *Manager) HandleWS(w http.ResponseWriter, r *http.Request, conn *websock
 
     log.Println("Player connected:", id)
 
-    // Listen for messages
     for {
         _, msg, err := conn.ReadMessage()
         if err != nil {
@@ -144,48 +143,53 @@ func (m *Manager) HandleWS(w http.ResponseWriter, r *http.Request, conn *websock
 
         log.Printf("WS message from %s: %s", id, string(msg))
 
-        // Parse message
         var data map[string]interface{}
         json.Unmarshal(msg, &data)
 
-        // START COUNTDOWN (new start signal)
-        if data["type"] == "start_countdown" {
-            m.Broadcast(code, []byte(`{"type":"start_countdown"}`))
-            continue
-        }
+        msgType, _ := data["type"].(string)
 
-        // NOMINATION STAGE
-        if data["type"] == "nomination" {
-            role := data["role"].(string)
+        switch msgType {
+
+        // COUNTDOWN START
+        case "start_countdown":
+            m.Broadcast(code, []byte(`{"type":"start_countdown"}`))
+
+        // NOMINATION: SAFE STRING EXTRACTION
+        case "nomination":
+            rawRole, ok := data["role"].(string)
+            if !ok {
+                log.Println("Invalid role from client")
+                continue
+            }
+            role := rawRole
 
             room.Mutex.Lock()
             player.RoleWant = role
             room.Mutex.Unlock()
 
-            // Broadcast nomination event to all players
             m.Broadcast(code, []byte(fmt.Sprintf(
                 `{"type":"nomination","player":"%s","role":"%s"}`,
                 player.Name, role,
             )))
-            continue
-        }
 
-        // MOVE TO CAMPAIGNING
-        if data["type"] == "start_campaigning" {
+        // ENTER CAMPAIGNING
+        case "start_campaigning":
             m.Broadcast(code, []byte(`{"type":"start_campaigning"}`))
-            continue
+
+        // ENTER VOTING
+        case "start_voting":
+            m.Broadcast(code, []byte(`{"type":"start_voting"}`))
+
+        // DEFAULT = forward message
+        default:
+            m.Broadcast(code, msg)
         }
-
-
-        // Default broadcast
-        m.Broadcast(code, msg)
-
     }
 }
 
-// ------------------------------------------
-// BROADCAST
-// ------------------------------------------
+/// ------------------------------------------------------
+/// BROADCAST TO ALL PLAYERS
+/// ------------------------------------------------------
 
 func (m *Manager) Broadcast(code string, data []byte) {
     room := m.Rooms[code]
@@ -200,9 +204,9 @@ func (m *Manager) Broadcast(code string, data []byte) {
     }
 }
 
-// ------------------------------------------
-// HELPERS
-// ------------------------------------------
+/// ------------------------------------------------------
+/// HELPERS
+/// ------------------------------------------------------
 
 func generateRoomCode() string {
     letters := []rune("ABCDEFGHJKLMNPQRSTUVWXYZ23456789")

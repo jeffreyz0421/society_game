@@ -76,15 +76,13 @@ function openSocket() {
             case "player_joined":
                 addNewPlayer(data.name);
                 break;
-
-            case "start_game":
-                // Everyone moves to role selection
-                show("screen_role");
-                break;
                 
-            case "nomination":
-                console.log(`${data.player} nominated ${data.role}`);
+            case "start_campaigning":
+                updateRoundTable();
+                show("screen_campaigning");
+                startCampaignTimer();
                 break;
+
 
             case "roles_available":
                 renderRoles(data.roles);
@@ -257,16 +255,31 @@ function updateRoundTable() {
         const p = players[i];
 
         if (!seat) continue;
+
         if (!p) {
-            seat.innerHTML = "<div style='margin-top:30px;color:#aaa;font-size:18px;'>Waiting...</div>";
+            seat.innerHTML = `
+                <div style="margin-top:32px;color:#aaa;font-size:16px;">
+                    Waiting...
+                </div>
+            `;
         } else {
             seat.innerHTML = `
-                <div style="font-size:40px">${p.emoji}</div>
-                <div style="font-size:18px;margin-top:4px;font-weight:600;">${p.name}</div>
+                <div style="font-size:40px;line-height:40px;">${p.emoji}</div>
+                <div style="
+                    font-size:15px;
+                    font-weight:600;
+                    margin-top:4px;
+                    white-space:nowrap;
+                    overflow:hidden;
+                    text-overflow:ellipsis;
+                ">
+                    ${p.name}
+                </div>
             `;
         }
     }
 }
+
 
 
 // --------------------------------------------------
@@ -344,10 +357,26 @@ function renderNominationRoles() {
         btn.innerHTML = role;  // IMPORTANT: innerHTML instead of innerText
 
         btn.onclick = () => {
+            // CLEAN role to remove <span> HTML
+            const cleanRole = role.replace(/<[^>]*>/g, "");
+
+            // Send clean role to backend
             socket.send(JSON.stringify({
                 type: "nomination",
-                role
+                role: cleanRole
             }));
+
+            // Save the pretty HTML version for UI display
+            window.nominationChoice = role;
+
+            // Update UI
+            const desired = document.getElementById("campaignDesiredRole");
+            if (desired) desired.innerHTML = "Desired Position: " + role;
+
+            updateRoundTable();
+            show("screen_campaigning");
+        };
+
 
             // save choice for UI
             window.nominationChoice = role;
@@ -356,7 +385,55 @@ function renderNominationRoles() {
             const desired = document.getElementById("campaignDesiredRole");
             if (desired) desired.innerHTML = "Desired Position: " + role;
 
+            updateRoundTable();
             show("screen_campaigning");
+        };
+
+        container.appendChild(btn);
+    });
+}
+
+let campaignInterval = null;
+
+function startCampaignTimer() {
+    let time = 120; // 2 minutes
+
+    const box = document.getElementById("campaignTimer");
+    box.innerText = "⏳ 2:00";
+
+    campaignInterval = setInterval(() => {
+        time--;
+
+        const min = Math.floor(time / 60);
+        const sec = time % 60;
+
+        box.innerText = `⏳ ${min}:${sec.toString().padStart(2, '0')}`;
+
+        if (time <= 0) {
+            clearInterval(campaignInterval);
+
+            // MOVE EVERYONE TO VOTING
+            socket.send(JSON.stringify({
+                type: "start_voting"
+            }));
+        }
+    }, 1000);
+}
+function renderVoting(options) {
+    const container = document.getElementById("voteOptions");
+    container.innerHTML = "";
+
+    // Simple placeholder:
+    (options || []).forEach(opt => {
+        const btn = document.createElement("button");
+        btn.className = "voteButton";
+        btn.innerText = opt;
+
+        btn.onclick = () => {
+            socket.send(JSON.stringify({
+                type: "vote",
+                vote: opt
+            }));
         };
 
         container.appendChild(btn);
