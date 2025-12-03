@@ -189,6 +189,17 @@ func (m *Manager) HandleWS(w http.ResponseWriter, r *http.Request, conn *websock
                 go m.StartCampaignTimer(code)
             }
             room.Mutex.Unlock()
+            
+        // CHAT SYSTEM
+        case "chat":
+            text, _ := data["text"].(string)
+
+            // broadcast chat to everyone with player's name
+            m.Broadcast(code, []byte(fmt.Sprintf(
+                `{"type":"chat","from":"%s","text":"%s"}`,
+                player.Name, text,
+            )))
+
 
         //--------------------------------------------------
         // START VOTING

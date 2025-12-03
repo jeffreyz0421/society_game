@@ -277,3 +277,31 @@ input {
 .chatBubble strong {
     color: #444;
 }
+
+/* ========== PRO SCREEN ENGINE ========== */
+
+#mainContainer {
+    max-width: 900px;
+    margin: auto;
+    padding: 40px;
+    position: relative;  /* enables screen stacking */
+}
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100%;
+    z-index: 0;
+    padding-top: 20px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#header {
+    position: relative;
+    z-index: 10;
+}

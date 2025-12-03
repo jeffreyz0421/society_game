@@ -96,8 +96,8 @@ function openSocket() {
                 break;
 
             case "chat":
-                addChatMessage(data.from, data.text);
-                addChatMessageToHistory(data.from, data.text);
+                addChatMessage(data.from, data.text);     // main live chat window
+                addChatMessageToHistory(data.from, data.text); // campaign chat screen
                 break;
 
             case "start_countdown":
@@ -145,9 +145,25 @@ function sendChat() {
     const text = input.value.trim();
     if (!text) return;
 
-    socket.send(JSON.stringify({ type: "chat", text }));
+    socket.send(JSON.stringify({
+        type: "chat",
+        text
+    }));
     input.value = "";
 }
+
+function sendChat2() {
+    const input = document.getElementById("chatInput2");
+    const text = input.value.trim();
+    if (!text) return;
+
+    socket.send(JSON.stringify({
+        type: "chat",
+        text
+    }));
+    input.value = "";
+}
+
 
 function addChatMessage(from, text) {
     const box = document.getElementById("chatBox");
@@ -300,15 +316,6 @@ function openChat() {
     show("screen_chat");
 }
 
-function sendChat2() {
-    const input = document.getElementById("chatInput2");
-    const text = input.value.trim();
-    if (!text) return;
-
-    socket.send(JSON.stringify({ type: "chat", text }));
-    input.value = "";
-}
-
 function addChatMessageToHistory(from, text) {
     const box = document.getElementById("chatHistory");
     if (!box) return;
@@ -386,4 +393,26 @@ function renderNominationRoles() {
 
         container.appendChild(btn);
     });
+}
+
+function addChatMessage(from, text) {
+    const box = document.getElementById("chatBox");
+    if (!box) return;
+
+    const el = document.createElement("div");
+    el.className = "chatBubble";
+    el.innerHTML = `<strong>${from}:</strong> ${text}`;
+    box.appendChild(el);
+    box.scrollTop = box.scrollHeight;
+}
+
+function addChatMessageToHistory(from, text) {
+    const box = document.getElementById("chatHistory");
+    if (!box) return;
+
+    const el = document.createElement("div");
+    el.className = "chatBubble";
+    el.innerHTML = `<strong>${from}:</strong> ${text}`;
+    box.appendChild(el);
+    box.scrollTop = box.scrollHeight;
 }
