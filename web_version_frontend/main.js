@@ -76,13 +76,20 @@ function openSocket() {
             case "player_joined":
                 addNewPlayer(data.name);
                 break;
-                
+
+            // ✔️ Start campaigning (NO frontend timer)
             case "start_campaigning":
                 updateRoundTable();
                 show("screen_campaigning");
-                startCampaignTimer();
                 break;
 
+            // ✔️ Backend timer update
+            case "campaign_timer":
+                const t = data.time;
+                const min = Math.floor(t / 60);
+                const sec = (t % 60).toString().padStart(2, "0");
+                document.getElementById("campaignTimer").innerText = `⏳ ${min}:${sec}`;
+                break;
 
             case "roles_available":
                 renderRoles(data.roles);
@@ -93,15 +100,13 @@ function openSocket() {
                 addChatMessageToHistory(data.from, data.text);
                 break;
 
-
             case "start_countdown":
                 startCountdown();
                 break;
-                
+
             case "nomination":
                 console.log(`${data.player} nominated for ${data.role}`);
                 break;
-
 
             case "start_voting":
                 show("screen_voting");
@@ -357,73 +362,28 @@ function renderNominationRoles() {
         btn.innerHTML = role; // pretty HTML
 
         btn.onclick = () => {
-            // CLEAN plain role without <span>
+            // Clean role (strip HTML tags)
             const cleanRole = role.replace(/<[^>]*>/g, "");
 
-            // send to backend
+            // Send nomination choice to backend
             socket.send(JSON.stringify({
                 type: "nomination",
                 role: cleanRole
             }));
 
-            // store for UI display
+            // Save pretty HTML version for UI
             window.nominationChoice = role;
 
-            // update campaigning header
+            // Update UI
             const desired = document.getElementById("campaignDesiredRole");
             if (desired) desired.innerHTML = "Desired Position: " + role;
 
             updateRoundTable();
-            show("screen_campaigning");
+
+            // DO NOT auto-start campaigning here
+            // Campaigning should only start when backend says so
         };
 
-        container.appendChild(btn);
-    });
-}
-
-
-let campaignInterval = null;
-
-function startCampaignTimer() {
-    let time = 120; // 2 minutes
-
-    const box = document.getElementById("campaignTimer");
-    box.innerText = "⏳ 2:00";
-
-    campaignInterval = setInterval(() => {
-        time--;
-
-        const min = Math.floor(time / 60);
-        const sec = time % 60;
-
-        box.innerText = `⏳ ${min}:${sec.toString().padStart(2, '0')}`;
-
-        if (time <= 0) {
-            clearInterval(campaignInterval);
-
-            // MOVE EVERYONE TO VOTING
-            socket.send(JSON.stringify({
-                type: "start_voting"
-            }));
-        }
-    }, 1000);
-}
-function renderVoting(options) {
-    const container = document.getElementById("voteOptions");
-    container.innerHTML = "";
-
-    // Simple placeholder:
-    (options || []).forEach(opt => {
-        const btn = document.createElement("button");
-        btn.className = "voteButton";
-        btn.innerText = opt;
-
-        btn.onclick = () => {
-            socket.send(JSON.stringify({
-                type: "vote",
-                vote: opt
-            }));
-        };
 
         container.appendChild(btn);
     });

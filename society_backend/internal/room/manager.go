@@ -26,9 +26,10 @@ type Player struct {
 }
 
 type Room struct {
-    Code    string
-    Players map[string]*Player
-    Mutex   sync.Mutex
+    Code          string
+    Players       map[string]*Player
+    Mutex         sync.Mutex
+    CampaignTimerRunning bool
 }
 
 type Manager struct {
@@ -141,8 +142,6 @@ func (m *Manager) HandleWS(w http.ResponseWriter, r *http.Request, conn *websock
             break
         }
 
-        log.Printf("WS message from %s: %s", id, string(msg))
-
         var data map[string]interface{}
         json.Unmarshal(msg, &data)
 
@@ -150,37 +149,48 @@ func (m *Manager) HandleWS(w http.ResponseWriter, r *http.Request, conn *websock
 
         switch msgType {
 
-        // COUNTDOWN START
+        // COUNTDOWN
         case "start_countdown":
             m.Broadcast(code, []byte(`{"type":"start_countdown"}`))
+            break
 
-        // NOMINATION: SAFE STRING EXTRACTION
+        // NOMINATION
         case "nomination":
             rawRole, ok := data["role"].(string)
             if !ok {
                 log.Println("Invalid role from client")
-                continue
+                break
             }
-            role := rawRole
 
             room.Mutex.Lock()
-            player.RoleWant = role
+            player.RoleWant = rawRole
             room.Mutex.Unlock()
 
             m.Broadcast(code, []byte(fmt.Sprintf(
                 `{"type":"nomination","player":"%s","role":"%s"}`,
-                player.Name, role,
+                player.Name, rawRole,
             )))
+            break
 
-        // ENTER CAMPAIGNING
+        // START CAMPAIGNING
         case "start_campaigning":
             m.Broadcast(code, []byte(`{"type":"start_campaigning"}`))
 
-        // ENTER VOTING
+            room.Mutex.Lock()
+            alreadyRunning := room.CampaignTimerRunning
+            if !alreadyRunning {
+                room.CampaignTimerRunning = true
+                go m.StartCampaignTimer(code)
+            }
+            room.Mutex.Unlock()
+            break
+
+        // START VOTING
         case "start_voting":
             m.Broadcast(code, []byte(`{"type":"start_voting"}`))
+            break
 
-        // DEFAULT = forward message
+        // DEFAULT
         default:
             m.Broadcast(code, msg)
         }
@@ -188,7 +198,26 @@ func (m *Manager) HandleWS(w http.ResponseWriter, r *http.Request, conn *websock
 }
 
 /// ------------------------------------------------------
-/// BROADCAST TO ALL PLAYERS
+/// BACKEND TIMER
+/// ------------------------------------------------------
+
+func (m *Manager) StartCampaignTimer(code string) {
+    duration := 120 // 2 minutes
+
+    for duration >= 0 {
+        m.Broadcast(code, []byte(fmt.Sprintf(
+            `{"type":"campaign_timer","time":%d}`, duration,
+        )))
+
+        time.Sleep(1 * time.Second)
+        duration--
+    }
+
+    m.Broadcast(code, []byte(`{"type":"start_voting"}`))
+}
+
+/// ------------------------------------------------------
+/// BROADCAST
 /// ------------------------------------------------------
 
 func (m *Manager) Broadcast(code string, data []byte) {
