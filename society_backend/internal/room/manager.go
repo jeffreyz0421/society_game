@@ -26,9 +26,9 @@ type Player struct {
 }
 
 type Room struct {
-    Code          string
-    Players       map[string]*Player
-    Mutex         sync.Mutex
+    Code                 string
+    Players              map[string]*Player
+    Mutex                sync.Mutex
     CampaignTimerRunning bool
 }
 
@@ -54,8 +54,9 @@ func (m *Manager) HandleCreateRoom(w http.ResponseWriter, r *http.Request) {
     code := generateRoomCode()
 
     room := &Room{
-        Code:    code,
-        Players: make(map[string]*Player),
+        Code:                 code,
+        Players:              make(map[string]*Player),
+        CampaignTimerRunning: false,
     }
 
     m.Rooms[code] = room
@@ -102,12 +103,13 @@ func (m *Manager) HandleJoinRoom(w http.ResponseWriter, r *http.Request) {
     }
     room.Mutex.Unlock()
 
+    // Respond to joining player
     w.Header().Set("Content-Type", "application/json")
     json.NewEncoder(w).Encode(map[string]string{
         "playerID": id,
     })
 
-    // Notify players
+    // Notify all players
     m.Broadcast(req.Code, []byte(fmt.Sprintf(
         `{"type":"player_joined","name":"%s"}`, req.Name,
     )))
@@ -149,12 +151,15 @@ func (m *Manager) HandleWS(w http.ResponseWriter, r *http.Request, conn *websock
 
         switch msgType {
 
+        //--------------------------------------------------
         // COUNTDOWN
+        //--------------------------------------------------
         case "start_countdown":
             m.Broadcast(code, []byte(`{"type":"start_countdown"}`))
-            break
 
+        //--------------------------------------------------
         // NOMINATION
+        //--------------------------------------------------
         case "nomination":
             rawRole, ok := data["role"].(string)
             if !ok {
@@ -170,9 +175,10 @@ func (m *Manager) HandleWS(w http.ResponseWriter, r *http.Request, conn *websock
                 `{"type":"nomination","player":"%s","role":"%s"}`,
                 player.Name, rawRole,
             )))
-            break
 
-        // START CAMPAIGNING
+        //--------------------------------------------------
+        // START CAMPAIGNING + start global backend timer
+        //--------------------------------------------------
         case "start_campaigning":
             m.Broadcast(code, []byte(`{"type":"start_campaigning"}`))
 
@@ -183,14 +189,16 @@ func (m *Manager) HandleWS(w http.ResponseWriter, r *http.Request, conn *websock
                 go m.StartCampaignTimer(code)
             }
             room.Mutex.Unlock()
-            break
 
+        //--------------------------------------------------
         // START VOTING
+        //--------------------------------------------------
         case "start_voting":
             m.Broadcast(code, []byte(`{"type":"start_voting"}`))
-            break
 
-        // DEFAULT
+        //--------------------------------------------------
+        // DEFAULT (broadcast raw messages)
+        //--------------------------------------------------
         default:
             m.Broadcast(code, msg)
         }
@@ -208,12 +216,18 @@ func (m *Manager) StartCampaignTimer(code string) {
         m.Broadcast(code, []byte(fmt.Sprintf(
             `{"type":"campaign_timer","time":%d}`, duration,
         )))
-
         time.Sleep(1 * time.Second)
         duration--
     }
 
+    // Time’s up → voting begins
     m.Broadcast(code, []byte(`{"type":"start_voting"}`))
+
+    // Reset so future games can run
+    room := m.Rooms[code]
+    room.Mutex.Lock()
+    room.CampaignTimerRunning = false
+    room.Mutex.Unlock()
 }
 
 /// ------------------------------------------------------

@@ -359,31 +359,30 @@ function renderNominationRoles() {
     roles.forEach(role => {
         const btn = document.createElement("button");
         btn.className = "roleButton";
-        btn.innerHTML = role; // pretty HTML
+        btn.innerHTML = role; // pretty HTML allowed
 
         btn.onclick = () => {
-            // Clean role (strip HTML tags)
+            // Clean role (strip all HTML tags)
             const cleanRole = role.replace(/<[^>]*>/g, "");
 
-            // Send nomination choice to backend
+            // Send clean role to backend
             socket.send(JSON.stringify({
                 type: "nomination",
                 role: cleanRole
             }));
 
-            // Save pretty HTML version for UI
+            // Store pretty version for UI
             window.nominationChoice = role;
 
-            // Update UI
+            // Update "desired" label
             const desired = document.getElementById("campaignDesiredRole");
             if (desired) desired.innerHTML = "Desired Position: " + role;
 
             updateRoundTable();
 
-            // DO NOT auto-start campaigning here
-            // Campaigning should only start when backend says so
+            // ❌ Do NOT trigger start_campaigning here
+            // Waiting for backend to send "start_campaigning"
         };
-
 
         container.appendChild(btn);
     });
