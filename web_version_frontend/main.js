@@ -164,16 +164,6 @@ function sendChat2() {
     input.value = "";
 }
 
-
-function addChatMessage(from, text) {
-    const box = document.getElementById("chatBox");
-    const el = document.createElement("div");
-
-    el.innerHTML = `<strong>${from}:</strong> ${text}`;
-    box.appendChild(el);
-    box.scrollTop = box.scrollHeight;
-}
-
 // --------------------------------------------------
 // HOST FLOW
 // --------------------------------------------------
@@ -316,16 +306,7 @@ function openChat() {
     show("screen_chat");
 }
 
-function addChatMessageToHistory(from, text) {
-    const box = document.getElementById("chatHistory");
-    if (!box) return;
 
-    const el = document.createElement("div");
-    el.className = "chatBubble";
-    el.innerHTML = `<strong>${from}:</strong> ${text}`;
-    box.appendChild(el);
-    box.scrollTop = box.scrollHeight;
-}
 function startCountdown() {
     show("screen_countdown");
 
@@ -415,4 +396,22 @@ function addChatMessageToHistory(from, text) {
     el.innerHTML = `<strong>${from}:</strong> ${text}`;
     box.appendChild(el);
     box.scrollTop = box.scrollHeight;
+}
+
+function renderVoting(options) {
+    const container = document.getElementById("voteOptions");
+    container.innerHTML = "";
+
+    options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.className = "voteButton";
+        btn.innerText = opt;
+
+        btn.onclick = () => socket.send(JSON.stringify({
+            type: "vote",
+            choice: opt
+        }));
+
+        container.appendChild(btn);
+    });
 }

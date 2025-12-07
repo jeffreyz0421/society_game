@@ -169,12 +169,38 @@ func (m *Manager) HandleWS(w http.ResponseWriter, r *http.Request, conn *websock
 
             room.Mutex.Lock()
             player.RoleWant = rawRole
+
+            // Check if all players have chosen a role
+            allChosen := true
+            for _, p := range room.Players {
+                if p.Conn != nil && p.RoleWant == "" {
+                    allChosen = false
+                    break
+                }
+            }
+
             room.Mutex.Unlock()
 
+            // Broadcast nomination update
             m.Broadcast(code, []byte(fmt.Sprintf(
                 `{"type":"nomination","player":"%s","role":"%s"}`,
                 player.Name, rawRole,
             )))
+
+            // If all players have nominated → start campaigning
+            if allChosen {
+                log.Println("All players nominated — starting campaigning stage.")
+
+                m.Broadcast(code, []byte(`{"type":"start_campaigning"}`))
+
+                room.Mutex.Lock()
+                if !room.CampaignTimerRunning {
+                    room.CampaignTimerRunning = true
+                    go m.StartCampaignTimer(code)
+                }
+                room.Mutex.Unlock()
+            }
+
 
         //--------------------------------------------------
         // START CAMPAIGNING + start global backend timer
@@ -195,17 +221,21 @@ func (m *Manager) HandleWS(w http.ResponseWriter, r *http.Request, conn *websock
             text, _ := data["text"].(string)
 
             // broadcast chat to everyone with player's name
-            m.Broadcast(code, []byte(fmt.Sprintf(
-                `{"type":"chat","from":"%s","text":"%s"}`,
-                player.Name, text,
-            )))
+            msg := map[string]string{
+                "type": "chat",
+                "from": player.Name,
+                "text": text,
+            }
+            jsonData, _ := json.Marshal(msg)
+            m.Broadcast(code, jsonData)
+
 
 
         //--------------------------------------------------
         // START VOTING
         //--------------------------------------------------
         case "start_voting":
-            m.Broadcast(code, []byte(`{"type":"start_voting"}`))
+            m.Broadcast(code, []byte(`{"type":"start_voting","options":["President","Chief Justice","Department of Education","Department of Labor","Department of Construction"]}`))
 
         //--------------------------------------------------
         // DEFAULT (broadcast raw messages)
@@ -232,7 +262,8 @@ func (m *Manager) StartCampaignTimer(code string) {
     }
 
     // Time’s up → voting begins
-    m.Broadcast(code, []byte(`{"type":"start_voting"}`))
+    m.Broadcast(code, []byte(`{"type":"start_voting","options":["President","Chief Justice","Department of Education","Department of Labor","Department of Construction"]}`))
+
 
     // Reset so future games can run
     room := m.Rooms[code]
@@ -244,7 +275,6 @@ func (m *Manager) StartCampaignTimer(code string) {
 /// ------------------------------------------------------
 /// BROADCAST
 /// ------------------------------------------------------
-
 func (m *Manager) Broadcast(code string, data []byte) {
     room := m.Rooms[code]
 
@@ -257,6 +287,8 @@ func (m *Manager) Broadcast(code string, data []byte) {
         }
     }
 }
+
+
 
 /// ------------------------------------------------------
 /// HELPERS

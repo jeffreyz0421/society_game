@@ -37,7 +37,7 @@
         </div>
     </div>
 
-    <!-- WAITING FOR HOST SCREEN (PLAYERS ONLY) -->
+    <!-- WAITING FOR HOST SCREEN -->
     <div id="screen_waiting" class="screen hidden">
         <h2 class="sectionTitle">⏳ Waiting for Host...</h2>
         <p class="waitingNote">Room Code: <span id="waitingRoomCode"></span></p>
@@ -54,7 +54,7 @@
         <button class="btn backBtn" onclick="show('screen_join')">Back</button>
     </div>
 
-    <!-- QR + LOBBY SCREEN (HOST ONLY) -->
+    <!-- QR SCREEN -->
     <div id="screen_qr" class="screen hidden">
         <h2 class="sectionTitle">Scan to Join</h2>
 
@@ -69,7 +69,7 @@
 
         <button class="btn backBtn" onclick="show('screen_join')">Back</button>
     </div>
-    
+
     <!-- COUNTDOWN SCREEN -->
     <div id="screen_countdown" class="screen hidden">
         <h2 class="sectionTitle">Game Starting...</h2>
@@ -85,7 +85,7 @@
             font-weight: 600;
         "></div>
     </div>
-    
+
     <!-- NOMINATION SCREEN -->
     <div id="screen_nomination" class="screen hidden">
         <h2 class="sectionTitle">Nomination Stage</h2>
@@ -101,27 +101,29 @@
         <div id="nominationList" class="roleGrid"></div>
     </div>
 
-
-    <!-- CAMPAIGNING -->
+    <!-- CAMPAIGNING SCREEN -->
     <div id="screen_campaigning" class="screen hidden">
 
         <h2 class="sectionTitle">Campaigning Stage</h2>
-        
-        <p style="
+
+        <h3 style="
             font-size:22px;
             font-weight:600;
             margin-bottom:20px;
             color:#555;
         ">
-            Society: time to campaign and buy votes to get the positions you desire!
-        </p>
+            Society: time to campaign & BUY VOTES!
+        </h3>
+
+        <!-- LIVE CHAT BOX (does NOT overlap other screens) -->
+        <div id="chatBox" class="campaignChatBox"></div>
+
         <p id="campaignDesiredRole" style="
             font-size:20px;
             font-weight:600;
             margin-bottom:15px;
             color:#444;
         "></p>
-
 
         <!-- ROUND TABLE -->
         <div id="roundTable">
@@ -138,7 +140,8 @@
             <button class="btn actionBtn">📢 Rally</button>
             <button class="btn actionBtn">🤝 Promise</button>
         </div>
-        
+
+        <!-- TIMER -->
         <div id="campaignTimer" style="
             position: absolute;
             bottom: 20px;
@@ -154,21 +157,20 @@
             ⏳ 2:00
         </div>
 
-
     </div>
 
-
-    <!-- VOTING -->
+    <!-- VOTING SCREEN -->
     <div id="screen_voting" class="screen hidden">
         <h2 class="sectionTitle">Voting Stage</h2>
         <div id="voteOptions" class="voteGrid"></div>
     </div>
-    
+
     <!-- CHAT SCREEN -->
     <div id="screen_chat" class="screen hidden">
         <h2 class="sectionTitle">Campaign Chat</h2>
 
         <div class="chatLayout">
+            <!-- Chat history for chat screen ONLY -->
             <div id="chatHistory" class="chatHistory"></div>
 
             <div class="chatInputRow">
@@ -179,7 +181,6 @@
             <button class="btn backBtn" onclick="show('screen_campaigning')">Back</button>
         </div>
     </div>
-
 
 </div>
 
