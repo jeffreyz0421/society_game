@@ -1,6 +1,4 @@
-//
-//  main.js — FINAL POLISHED VERSION
-//
+//  main.js — FINAL CLEANED VERSION (patched)
 
 let socket = null;
 let playerID = null;
@@ -14,7 +12,7 @@ function randomEmoji() {
 
 let players = [null, null, null, null, null];
 
-// 🌍 BACKEND URL
+// BACKEND
 const BACKEND_HTTP = "https://society-game-backend.onrender.com";
 const BACKEND_WS   = "wss://society-game-backend.onrender.com";
 
@@ -46,11 +44,8 @@ function joinRoom() {
     .then(r => r.json())
     .then(data => {
         playerID = data.playerID;
-
-        // Player enters lobby screen
         show("screen_waiting");
         document.getElementById("waitingRoomCode").innerText = roomCode;
-
         openSocket();
     })
     .catch(err => console.error("JOIN ERR:", err));
@@ -62,28 +57,22 @@ function joinRoom() {
 function openSocket() {
     socket = new WebSocket(`${BACKEND_WS}/ws/${roomCode}/${playerID}`);
 
-    socket.onopen = () => {
-        console.log("WS connected!");
-        // 🧘 Players stay on waiting lobby, host stays on QR screen
-    };
+    socket.onopen = () => console.log("WS connected!");
 
     socket.onmessage = (msg) => {
         const data = JSON.parse(msg.data);
         console.log("WS MSG:", data);
 
         switch (data.type) {
-
             case "player_joined":
                 addNewPlayer(data.name);
                 break;
 
-            // ✔️ Start campaigning (NO frontend timer)
             case "start_campaigning":
                 updateRoundTable();
                 show("screen_campaigning");
                 break;
 
-            // ✔️ Backend timer update
             case "campaign_timer":
                 const t = data.time;
                 const min = Math.floor(t / 60);
@@ -91,21 +80,13 @@ function openSocket() {
                 document.getElementById("campaignTimer").innerText = `⏳ ${min}:${sec}`;
                 break;
 
-            case "roles_available":
-                renderRoles(data.roles);
-                break;
-
             case "chat":
-                addChatMessage(data.from, data.text);     // main live chat window
-                addChatMessageToHistory(data.from, data.text); // campaign chat screen
+                addChatMessage(data.from, data.text);
+                addChatMessageToHistory(data.from, data.text);
                 break;
 
             case "start_countdown":
                 startCountdown();
-                break;
-
-            case "nomination":
-                console.log(`${data.player} nominated for ${data.role}`);
                 break;
 
             case "start_voting":
@@ -117,38 +98,18 @@ function openSocket() {
 }
 
 // --------------------------------------------------
-// RENDER ROLES
-// --------------------------------------------------
-function renderRoles(roles) {
-    const container = document.getElementById("roleList");
-    container.innerHTML = "";
-
-    roles.forEach(role => {
-        const btn = document.createElement("button");
-        btn.className = "roleButton";
-        btn.innerText = role;
-
-        btn.onclick = () => socket.send(JSON.stringify({
-            type: "select_role",
-            role
-        }));
-
-        container.appendChild(btn);
-    });
-}
-
-// --------------------------------------------------
-// CHAT
+// CHAT (Campaign Screen)
 // --------------------------------------------------
 function sendChat() {
     const input = document.getElementById("chatInput");
+
+    // If chatInput doesn't exist, ignore
+    if (!input) return;
+
     const text = input.value.trim();
     if (!text) return;
 
-    socket.send(JSON.stringify({
-        type: "chat",
-        text
-    }));
+    socket.send(JSON.stringify({ type: "chat", text }));
     input.value = "";
 }
 
@@ -157,11 +118,30 @@ function sendChat2() {
     const text = input.value.trim();
     if (!text) return;
 
-    socket.send(JSON.stringify({
-        type: "chat",
-        text
-    }));
+    socket.send(JSON.stringify({ type: "chat", text }));
     input.value = "";
+}
+
+function addChatMessage(from, text) {
+    const box = document.getElementById("chatBox");
+    if (!box) return;
+
+    const el = document.createElement("div");
+    el.className = "chatBubble";
+    el.innerHTML = `<strong>${from}:</strong> ${text}`;
+    box.appendChild(el);
+    box.scrollTop = box.scrollHeight;
+}
+
+function addChatMessageToHistory(from, text) {
+    const box = document.getElementById("chatHistory");
+    if (!box) return;
+
+    const el = document.createElement("div");
+    el.className = "chatBubble";
+    el.innerHTML = `<strong>${from}:</strong> ${text}`;
+    box.appendChild(el);
+    box.scrollTop = box.scrollHeight;
 }
 
 // --------------------------------------------------
@@ -221,7 +201,7 @@ function showQRCode(joinURL, code) {
 }
 
 // --------------------------------------------------
-// LOBBY PLAYER SYSTEM
+// LOBBY
 // --------------------------------------------------
 function setupLobbyUI() {
     const lobby = document.getElementById("playerLobby");
@@ -258,8 +238,9 @@ function addNewPlayer(name) {
 
     players[idx] = { name, emoji: randomEmoji() };
     updateLobbyUI();
-    updateRoundTable();   // ← ADD THIS
+    updateRoundTable();
 }
+
 function updateRoundTable() {
     for (let i = 0; i < 5; i++) {
         const seat = document.getElementById(`seat${i}`);
@@ -276,14 +257,7 @@ function updateRoundTable() {
         } else {
             seat.innerHTML = `
                 <div style="font-size:40px;line-height:40px;">${p.emoji}</div>
-                <div style="
-                    font-size:15px;
-                    font-weight:600;
-                    margin-top:4px;
-                    white-space:nowrap;
-                    overflow:hidden;
-                    text-overflow:ellipsis;
-                ">
+                <div style="font-size:15px;font-weight:600;margin-top:4px;">
                     ${p.name}
                 </div>
             `;
@@ -291,21 +265,37 @@ function updateRoundTable() {
     }
 }
 
+// --------------------------------------------------
+// VOTING RENDER
+// --------------------------------------------------
+function renderVoting(options = []) {
+    const container = document.getElementById("voteOptions");
+    container.innerHTML = "";
 
+    options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.className = "voteButton";
+        btn.innerText = opt;
+
+        btn.onclick = () => socket.send(JSON.stringify({
+            type: "vote",
+            choice: opt
+        }));
+
+        container.appendChild(btn);
+    });
+}
 
 // --------------------------------------------------
-// START GAME (host only)
+// COUNTDOWN
 // --------------------------------------------------
 function startGame() {
-    socket.send(JSON.stringify({
-        type: "start_countdown"
-    }));
+    socket.send(JSON.stringify({ type: "start_countdown" }));
 }
 
 function openChat() {
     show("screen_chat");
 }
-
 
 function startCountdown() {
     show("screen_countdown");
@@ -315,6 +305,7 @@ function startCountdown() {
 
     const interval = setInterval(() => {
         t--;
+
         if (t > 0) {
             document.getElementById("countdownNumber").innerText = t;
         } else if (t === 0) {
@@ -322,16 +313,15 @@ function startCountdown() {
             document.getElementById("countdownMessage").innerText = "Prepare to debate!";
         } else {
             clearInterval(interval);
-
-            // 🔥 SHOW NOMINATION SCREEN
             show("screen_nomination");
-
-            // 🔥 LOAD NOMINATION BUTTONS
             renderNominationRoles();
         }
     }, 1000);
 }
 
+// --------------------------------------------------
+// NOMINATION
+// --------------------------------------------------
 function renderNominationRoles() {
     const roles = [
         "President (+200 points, <span style='font-size:16px'>if got the position</span>)",
@@ -347,70 +337,19 @@ function renderNominationRoles() {
     roles.forEach(role => {
         const btn = document.createElement("button");
         btn.className = "roleButton";
-        btn.innerHTML = role; // pretty HTML allowed
+        btn.innerHTML = role;
 
         btn.onclick = () => {
-            // Clean role (strip all HTML tags)
             const cleanRole = role.replace(/<[^>]*>/g, "");
 
-            // Send clean role to backend
             socket.send(JSON.stringify({
                 type: "nomination",
                 role: cleanRole
             }));
 
-            // Store pretty version for UI
-            window.nominationChoice = role;
-
-            // Update "desired" label
-            const desired = document.getElementById("campaignDesiredRole");
-            if (desired) desired.innerHTML = "Desired Position: " + role;
-
-            updateRoundTable();
-
-            // ❌ Do NOT trigger start_campaigning here
-            // Waiting for backend to send "start_campaigning"
+            document.getElementById("campaignDesiredRole").innerHTML =
+                "Desired Position: " + role;
         };
-
-        container.appendChild(btn);
-    });
-}
-
-function addChatMessage(from, text) {
-    const box = document.getElementById("chatBox");
-    if (!box) return;
-
-    const el = document.createElement("div");
-    el.className = "chatBubble";
-    el.innerHTML = `<strong>${from}:</strong> ${text}`;
-    box.appendChild(el);
-    box.scrollTop = box.scrollHeight;
-}
-
-function addChatMessageToHistory(from, text) {
-    const box = document.getElementById("chatHistory");
-    if (!box) return;
-
-    const el = document.createElement("div");
-    el.className = "chatBubble";
-    el.innerHTML = `<strong>${from}:</strong> ${text}`;
-    box.appendChild(el);
-    box.scrollTop = box.scrollHeight;
-}
-
-function renderVoting(options) {
-    const container = document.getElementById("voteOptions");
-    container.innerHTML = "";
-
-    options.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.className = "voteButton";
-        btn.innerText = opt;
-
-        btn.onclick = () => socket.send(JSON.stringify({
-            type: "vote",
-            choice: opt
-        }));
 
         container.appendChild(btn);
     });
